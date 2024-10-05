@@ -61,52 +61,50 @@ class RegisteredUserController extends Controller
      */
     public function createBusiness(): View
     {
-        return view('auth.ownerReg'); // returns the owner registration form
+        // Just return the view for registration
+        return view('auth.ownerReg'); // Correct this to the view that shows the form
     }
 
-    /**
-     * Handle an incoming business owner registration request.
-     */
     public function storeBusiness(Request $request): RedirectResponse
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|confirmed|min:8',
-        'shop_id' => 'required|exists:businesses,id', // Ensure this is the correct field
-    ]);
-
-    // Create the user
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-    ]);
-
-    // Assign the 'owner' role
-    $role = Role::where('name', 'owner')->first();
-    if ($role) {
-        $user->roles()->attach($role);
-    } else {
-        // Log an error or handle the missing role case
-        \Log::error('Owner role not found.');
+    {
+        // Validate the incoming request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|confirmed|min:8',
+        ]);
+        
+        // Check if validation passed
+        \Log::info('Validation passed', $request->all());
+    
+        // Create the user
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+            \Log::info('User created', ['user_id' => $user->id]);
+        } catch (\Exception $e) {
+            \Log::error('User creation failed', ['error' => $e->getMessage()]);
+            return back()->withErrors(['registration' => 'Failed to register user.']);
+        }
+    
+        // Assign the 'owner' role
+        $role = Role::where('name', 'owner')->first();
+        if ($role) {
+            $user->roles()->attach($role);
+            \Log::info('Role assigned', ['role_id' => $role->id]);
+        } else {
+            \Log::error('Owner role not found.');
+        }
+    
+        // Log the user in
+        Auth::login($user);
+    
+        return redirect()->route('owner.dashboard');
     }
-
-    // Claim the shop
-    $shop = businesses::find($request->shop_id);
-    if ($shop) {
-        $shop->ownerName = $user->name; // Set the owner name
-        $shop->claimed_by = $user->id; // Update the claimed_by field
-        $shop->save();
-    } else {
-        // Log an error or handle the case where the shop is not found
-        \Log::error('Shop not found for claiming.');
-    }
-
-    Auth::login($user);
-    return redirect(RouteServiceProvider::HOME); // Redirect to a specific route
-}
-
+    
 
     public function searchShop(Request $request)
     {

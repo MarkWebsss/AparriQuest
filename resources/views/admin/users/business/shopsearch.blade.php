@@ -11,22 +11,22 @@
                     <table class="table table-condensed table-hover mt-4">
                         <thead>
                             <tr>
-                                <th>Permit ID</th>
-                                <th>Owner</th>
-                                <th>Shop Name</th>
-                                <th>Address</th>
-                                <th>Permit Date</th>
+                                <th>TIN Number</th>
+                                <th>Full Name</th>
+                                <th>Business Name</th>
+                                <th>Full Address</th>
+                                <th>Date of Application</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($results as $result)
                                 <tr>
-                                    <td>{{ $result->PermitNum }}</td>
-                                    <td>{{ $result->ownerName }}</td>
-                                    <td>{{ $result->shopName }}</td>
-                                    <td>{{ $result->address }}</td>
-                                    <td>{{ $result->date }}</td>
+                                <td>{{ $result->tinNumber }}</td>  
+                                <td>{{ $result->fullName }}</td>  
+                                <td>{{ $result->businessName }}</td>  
+                                <td>{{ $result->fullAddress }}</td>  
+                                <td>{{ $result->dateOfApplication}}</td>
                                     <td>
                                         <form action="{{ route('business.destroy', $result->id) }}" method="POST">
                                             @csrf

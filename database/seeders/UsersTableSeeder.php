@@ -48,7 +48,7 @@ class UsersTableSeeder extends Seeder
         ]);
 
             $x = 0;
-            foreach(range(1,20) as $index)
+            foreach(range(1,5) as $index)
             {
                 $x++;
                 $user1 = User::create([

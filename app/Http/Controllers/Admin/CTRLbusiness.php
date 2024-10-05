@@ -111,17 +111,16 @@ class CTRLbusiness extends Controller
     {
         $query = $request->input('query');
 
-        // Perform the search query on the businesses model
-        $results = businesses::where('businessName', 'LIKE', "%{$query}%") // Adjust column name accordingly
-                    ->get();
+        
+        $results = businesses::where('tinNumber',  $query)->get();
     
-        // Make sure you're using the correct model reference for pagination
+        
         if ($results->isNotEmpty()) {
             return view('admin.users.business.shopsearch', compact('results'));
         }
     
-        // Return the original index view with all businesses if no search results
-        $businesses = businesses::paginate(5); // Adjust the pagination as needed
+        
+        $businesses = businesses::paginate(5); 
         return view('admin.users.business.shopsearch', compact('businesses'));
     }
 }
