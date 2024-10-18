@@ -13,12 +13,17 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Admin\DashCTRL;
 use App\Http\Controllers\Owners\CTRLOwners;
+use App\Http\Controllers\Owners\ProductController;
+use App\Http\Controllers\LandingPageController;
+
 
 
 // Route for the landing page
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/', [LandingPageController::class, 'index'])->name('landing.page');
 
 // Authentication routes
 require __DIR__ . '/auth.php';
@@ -84,6 +89,7 @@ Route::prefix('owner')->middleware(['auth', 'can:owner-access'])->group(function
     Route::post('/register', [RegisteredUserController::class, 'storeBusiness'])->name('register.business.submit'); 
 
     Route::get('/owner/dashboard', [CTRLOwners::class, 'index'])->name('owner.dashboard');
+    Route::resource('owner/products', ProductController::class);
 
     Route::get('/manage-requests', [OwnerRequestController::class, 'index'])->name('owner.manage-requests.index');
     // Add other owner-specific routes here

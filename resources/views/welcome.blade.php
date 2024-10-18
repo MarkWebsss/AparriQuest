@@ -225,10 +225,24 @@
     </section>
 
     <section id="products" class="bg-white">
-        <div>
-            <h2>Products here</h2>
-            <p>Show the different products</p>
+    <div class="container">
+        <h1 class="text-center">Available Products</h1>
+        <div class="row">
+            @foreach($products as $product)
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <img src="{{ $product->image ? asset('storage/' . $product->image) : asset('logo/NOIMAGE.png') }}" class="card-img-top" alt="Product Image" style="height: 300px; object-fit: cover;">
+                        <h5 class="card-title">{{ $product->name }}</h5>
+                        <p class="card-text">{{ $product->description }}</p>
+                        <p class="card-text"><strong>Status:</strong> {{ $product->status }}</p>
+                    </div>
+                </div>
+            </div>
+
+            @endforeach
         </div>
+    </div>
     </section>
 
     <!-- Contact Section -->

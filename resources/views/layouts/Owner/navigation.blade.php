@@ -6,11 +6,23 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                      {{--  <x-application-logo class="block h-9 w-auto fill-current text-gray-800" /> --}}
-                      <strong>AparriQuest</strong> 
+                        <div class="logo-container">
+                    <a href="#"><img src="{{ asset('logo/combinelogo.png') }}" alt="" id="logo-container" class=""></a>
+                    </div>
                     </a>
                 </div>
-
+                <style>
+                    logo-container {
+                        display: flex; /* Aligns items in a row */
+                        justify-content: center; /* Centers items horizontally */
+                        align-items: center; /* Aligns items vertically */
+                        padding-left: 20px; /* Add space between logos */
+                    }
+                    .logo-container img {
+                        max-width: 100px; /* Set a maximum width for logos */
+                        height: auto; /* Maintain aspect ratio */
+                    }
+                </style>
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
