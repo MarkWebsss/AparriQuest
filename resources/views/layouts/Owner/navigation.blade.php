@@ -12,7 +12,7 @@
                     </a>
                 </div>
                 <style>
-                    logo-container {
+                    .logo-container {
                         display: flex; /* Aligns items in a row */
                         justify-content: center; /* Centers items horizontally */
                         align-items: center; /* Aligns items vertically */
@@ -25,7 +25,7 @@
                 </style>
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('owner.dashboard')" :active="request()->routeIs('owner.dashboard')">
                         <img src="{{ asset('logo/dashboard.png') }}" class="m-1" alt="dashboard-logo" width="20px">
                         {{ __('Dashboard') }}
                     </x-nav-link>
@@ -41,8 +41,6 @@
                             <div>
                                 <!-- username of the account currently logged in -->
                                 {{ Auth::user()->name }}
-                            
-                            
                             </div>
 
                             <div class="ms-1">

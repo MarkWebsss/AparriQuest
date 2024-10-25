@@ -4,12 +4,11 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\support\facades\Hash;
+use Illuminate\Support\Facades\Hash; // Corrected the case
+use Illuminate\Support\Facades\DB; // Added this line
 
-	use App\Models\Role;
-	use App\Models\User;
-
-	use DB;
+use App\Models\Role;
+use App\Models\User;
 
 class UsersTableSeeder extends Seeder
 {
@@ -18,15 +17,21 @@ class UsersTableSeeder extends Seeder
      */
     public function run(): void
     {
-     
         // this will remove the record from the table when performing seeder 
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+
         User::truncate();
+        DB::table('users')->truncate();
+        DB::table('businesses')->truncate();
         DB::table('role_user')->truncate();
-        
-        // ths will get the roles from the role table 
-        $adminRole = Role::Where('name', 'admin')->first();  
-        $userRole = Role::Where('name', 'user')->first();
-        $ownerRole = Role::Where('name', 'owner')->first();
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        // this will get the roles from the role table 
+        $adminRole = Role::where('name', 'admin')->first();  
+        $userRole = Role::where('name', 'user')->first();
+        $ownerRole = Role::where('name', 'owner')->first();
 
         // this will define the users credentials and adds to the table users 
         $admin = User::create([
@@ -47,29 +52,21 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('shop')
         ]);
 
-            $x = 0;
-            foreach(range(1,5) as $index)
-            {
-                $x++;
-                $user1 = User::create([
-                    'name' => 'User'.$x,
-                    'email' => 'user'.$x.'@mail.com',
-                    'password' => Hash::make('user')
-                ]);
+        $x = 0;
+        foreach (range(1, 5) as $index) {
+            $x++;
+            $user1 = User::create([
+                'name' => 'User' . $x,
+                'email' => 'user' . $x . '@mail.com',
+                'password' => Hash::make('user')
+            ]);
 
-                $user1->roles()->attach($userRole);
-            }
-
-
-
+            $user1->roles()->attach($userRole);
+        }
 
         // this will attach the roles to the user account 
         $admin->roles()->attach($adminRole);
-
         $user->roles()->attach($userRole);
-
         $owner->roles()->attach($ownerRole);
-
-   
     }
 }

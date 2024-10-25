@@ -24,6 +24,10 @@ class businesses extends Model
         'businessCity',
         'businessEmail',
         'businessPhone',
+        'status',
+        'user_id',
+        'latitude',   
+        'longitude', 
     ];
 
     // Automatically set fullName before creating or updating

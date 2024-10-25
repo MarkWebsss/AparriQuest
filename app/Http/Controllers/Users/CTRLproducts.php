@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-use App\Models\Users\products;
-use DB;
+use App\Models\Owners\OwnerProduct;
 
 class CTRLproducts extends Controller
 {
@@ -16,13 +14,12 @@ class CTRLproducts extends Controller
     public function index()
     {
             
-        $allproducts = products::paginate(1);
+        // Retrieve all products from OwnerProduct model
+        $products = OwnerProduct::all();
+        $products = OwnerProduct::with('user')->get();
 
-        return view('users.products.index')
-        ->with('allproducts',$allproducts);
-        
-
-
+        // Return the landing page view with products
+        return view('users.products.index', compact('products'));
     }
 
     /**
@@ -46,7 +43,9 @@ class CTRLproducts extends Controller
      */
     public function show(string $id)
     {
-        //
+        $products = OwnerProduct::all();
+        $products = OwnerProduct::with('user')->findOrFail($id);
+        return view('users.products.productview', compact('products'));
     }
 
     /**
@@ -76,24 +75,24 @@ class CTRLproducts extends Controller
     // my search function goes here 
     public function searchproducts(Request $request)
     {
-        
-           // return products::Where('pdesc','LIKE','%'.$request->input('keyword').'%');
+        // Get the search query input from the user
+    $query = $request->input('query'); 
 
-           $searchresults = DB::table('products')
-            ->select('*')
-            ->where('pdesc','LIKE','%'.$request->input('keyword').'%')
-            ->get();
+    // Initialize the query to fetch products
+    $products = OwnerProduct::query();
 
-            return view('users.products.searchresults')
-            ->with('searchresults',$searchresults);
-
-            
-            return $request->input('keyword');
+    // Check if a query was entered
+    if (!empty($query)) {
+        // Search in the 'name' and 'description' columns using 'like' to allow for partial matching
+        $products = $products->where(function($queryBuilder) use ($query) {
+            $queryBuilder->where('name', 'like', '%' . $query . '%')
+                         ->orWhere('description', 'like', '%' . $query . '%');
+        });
     }
 
-
-
-
-
-
+    // Fetch the products from the database
+    $products = $products->get();
+        // Return the search results view with products
+        return view('users.products.searchresults', compact('products', 'query'));
+    }
 }

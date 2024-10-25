@@ -37,8 +37,8 @@
                     <div class="form-group">
                         <label for="status">Status</label>
                         <select name="status" class="form-control" required>
-                            <option value="available">Available</option>
-                            <option value="out of stock">Out of Stock</option>
+                            <option value="Available">Available</option>
+                            <option value="Out of stock">Out of Stock</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-success">Add Product</button>
@@ -65,7 +65,7 @@
 
     <div class="row">
         @foreach($products as $product)
-            <div class="col-md-4 mb-4">
+            <div class="col-md-2 mb-4">
                 <div class="card h-100">
                     <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
                     <div class="card-body">

@@ -40,6 +40,8 @@
                 <!-- starts to render the blade content -->
                 @yield('content')
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+                <script src="https://kit.fontawesome.com/039dd3507b.js" crossorigin="anonymous"></script>
             </main>
         </div>
     </body>

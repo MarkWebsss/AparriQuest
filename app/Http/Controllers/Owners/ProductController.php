@@ -13,7 +13,9 @@ class ProductController extends Controller
     public function index()
     {
         // Fetch products for the logged-in user
-        $products = OwnerProduct::where('user_id', Auth::id())->get();
+        $products = OwnerProduct::where('user_id', Auth::id())
+                                ->orderBy('created_at', 'desc')
+                                ->get();
         return view('owner.products.index', compact('products'));
     }
 

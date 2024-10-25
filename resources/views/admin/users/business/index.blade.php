@@ -84,7 +84,8 @@
                                         <th>Business Name</th>
                                         <th>Full Address</th>
                                         <th>Date of Application</th>
-                                        <th>Action</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -95,13 +96,20 @@
                                             <td>{{ $business->businessName }}</td>  
                                             <td>{{ $business->fullAddress }}</td>  
                                             <td>{{ $business->dateOfApplication}}</td>
+                                            <td>{{ $business->status}}</td>
                                             <td>
-                                                <form action="{{ route('business.destroy', $business->id) }}" method="POST" style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                                </form>
-                                                <a href="{{ route('business.show', $business->id) }}" class="btn btn-primary">View</a> 
+                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                    <a href="{{ route('business.show', $business->id) }}" class="btn btn-primary">
+                                                         View
+                                                    </a>
+                                                    <form action="{{ route('business.destroy', $business->id) }}" method="POST">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" onclick="return confirm('Are you sure?')" class="btn btn-danger">
+                                                        Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach

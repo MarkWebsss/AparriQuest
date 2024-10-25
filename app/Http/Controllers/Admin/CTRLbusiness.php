@@ -58,6 +58,11 @@ class CTRLbusiness extends Controller
 
         // Combine address fields into fullAddress
         $fullAddress = trim($validatedData['ownerHouseNo'] . ', ' . $validatedData['ownerStreetAddress'] . ', ' . $validatedData['ownerCity']);
+        
+
+        $business->ownerHouseNo = $validatedData['ownerHouseNo'];
+        $business->ownerStreetAddress = $validatedData['ownerStreetAddress'];
+        $business->ownerCity = $validatedData['ownerCity'];
         $business->fullAddress = $fullAddress;
 
         // Assign other request data to the business model
@@ -119,7 +124,6 @@ class CTRLbusiness extends Controller
             return view('admin.users.business.shopsearch', compact('results'));
         }
     
-        
         $businesses = businesses::paginate(5); 
         return view('admin.users.business.shopsearch', compact('businesses'));
     }

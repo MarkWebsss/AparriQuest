@@ -9,213 +9,131 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="p-6 text-gray-900">
             <div class="container">
+                <div class="row mb-4">
+                    @if(!$business)
+                    <div class="alert alert-warning">
+                        <h4 class="text-center">No Shop Claimed</h4>
+                        <p class="text-center">You have not claimed a shop yet. Please claim your shop using the TIN number provided during registration.</p>
+                        <form action="{{ route('claim-shop') }}" method="POST" class="d-flex justify-content-center">
+                            @csrf
+                            <input type="text" name="tinNumber" class="form-control w-50" placeholder="Enter TIN Number" required>
+                            <button type="submit" class="btn btn-success ml-2">Claim Shop</button>
+                        </form>
+                        @if ($errors->any())
+                        <div class="alert alert-danger mt-3">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    </div>
+                    @else
+                    <div class="col-sm-8">
+                        <h1 class="mb-3">Welcome, {{ Auth::user()->name }}</h1>
+                    </div>
+                </div>
+
+                <!-- Claimed business details -->
+
                 <div class="row">
-                    <div class="col-sm-8 me-2 mb-2">
-                        <h1>Welcome, {{ Auth::user()->name }}</h1>
-                    </div>
-                    
-                    <div class="col card bg-success">
-                        <div class="card-header">Profile</div>
-                        <img src="{{ asset('logo/logo1.png') }}" alt="Logo" 
-                             class="logo mx-auto rounded" width="100" height="100">
-                        <a href="" class="d-flex justify-content-center align-items-center text-white"
-                           style="outline:none; text-decoration: none;">+ Edit Bio</a>
-
-                        <div class="text-center">
-                            <a href="{{ route('profile.edit') }}" class="btn btn-light text-dark w-100 mb-2">Edit Profile</a>
-                        </div>
-                        <div class="text-center">
-                        <a href="{{ route('products.index') }}" class="btn btn-light text-dark w-100 mb-2">Add Products</a>
-
-                        </div>
-                        <div class="text-center">
-                            <a href="" class="btn btn-light text-dark w-100 mb-2">View Feedbacks</a>
-                        </div>
-                        <div class="text-center">
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="btn btn-light text-dark w-100 mb-2">
-                                    {{ __('Logout') }}
-                                </button>
-                            </form>
+                    <!-- Views Line Chart -->
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <div class="card shadow">
+                            <div class="card-header text-center"><b>Views</b></div>
+                            <div class="card-body">
+                                <canvas id="myLineChart"></canvas>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row mt-3">
-                    <div class="col-sm-4 card me-2">
-                        <div class="card-header text-center"><b>Views</b></div>
-                        <canvas id="myLineChart"></canvas>
+                    <!-- Customer Ratings Breakdown -->
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <div class="card shadow">
+                            <div class="card-header text-center"><b>Customer Ratings Breakdown</b></div>
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <p class="mt-2">No Rating</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Replace the Rate Line Chart with Star Rating Breakdown -->
-                    <div class="col-sm-4 card me-2">
-                        <div class="card-header text-center"><b>Customer Ratings Breakdown</b></div>
-                        <div class="p-3">
-                            <!-- Overall star rating -->
-                            <div class="star-rating text-center mb-3">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <p>4.5 Average Rating</p>
-                            </div>
-
-                            <!-- Ratings Breakdown with progress bars -->
-                            <div class="rating-bar">
-                                <span>5 star</span>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 80%;"></div>
-                                </div>
-                                <span>80%</span>
-                            </div>
-
-                            <div class="rating-bar">
-                                <span>4 star</span>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;"></div>
-                                </div>
-                                <span>60%</span>
-                            </div>
-
-                            <div class="rating-bar">
-                                <span>3 star</span>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%;"></div>
-                                </div>
-                                <span>40%</span>
-                            </div>
-
-                            <div class="rating-bar">
-                                <span>2 star</span>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 20%;"></div>
-                                </div>
-                                <span>20%</span>
-                            </div>
-
-                            <div class="rating-bar">
-                                <span>1 star</span>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 10%;"></div>
-                                </div>
-                                <span>10%</span>
+                    <!-- Profile Card -->
+                    <div class="col-lg-4 col-md-6 mb-3">
+                        <div class="card bg-success text-white shadow">
+                            <div class="card-header text-center">Profile</div>
+                            <div class="text-center p-3">
+                                <img src="{{ asset('logo/logo1.png') }}" alt="Logo" class="logo rounded-circle mb-3" width="100" height="100">
+                                <a href="#" class="d-block text-white mb-2">+ Edit Bio</a>
+                                <a href="{{ route('profile.edit') }}" class="btn btn-light text-dark w-100 mb-2">Edit Profile</a>
+                                <a href="{{ route('products.index') }}" class="btn btn-light text-dark w-100 mb-2">Add Products</a>
+                                <a href="#" class="btn btn-light text-dark w-100 mb-2">View Feedbacks</a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-light text-dark w-100">Logout</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-
+                @endif
             </div>
         </div>
     </div>
 </div>
 
-<!-- Views Graph -->
+<!-- Views Graph Script -->
 <script>
-    // Get the canvas element for views
     var ctx = document.getElementById('myLineChart').getContext('2d');
-
-    // Create the line chart for views
     var myLineChart = new Chart(ctx, {
-        type: 'line', // Define chart type
+        type: 'line',
         data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'], // X-axis labels
+            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
             datasets: [{
-                label: 'Shop Views/Visits', // Chart label
-                data: [100, 200, 150, 200, 150, 50], // Data points for the line
-                borderColor: 'rgba(75, 192, 192, 1)', // Line color
-                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Area under the line (transparent fill)
-                borderWidth: 2 // Line thickness
+                label: 'Shop Views/Visits',
+                data: [100, 200, 150, 200, 150, 50],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 2
             }]
         },
         options: {
-            responsive: true, // Make the chart responsive
+            responsive: true,
             scales: {
                 y: {
-                    beginAtZero: true // Start the Y-axis at 0
+                    beginAtZero: true
                 }
             }
         }
     });
 </script>
 
-<!-- Floating Button -->
-<button id="floatButton" class="float-button btn btn-success" data-bs-toggle="modal" data-bs-target="#profileModal">
-    <img src="{{ asset('logo/logo1.png') }}" alt="Logo" width="30" height="30">
-</button>
-
-<!-- Profile Modal -->
-<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="profileModalLabel">Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <img src="{{ asset('logo/logo1.png') }}" alt="Logo" 
-                     class="logo mx-auto rounded" width="100" height="100">
-                <a href="" class="d-flex justify-content-center align-items-center text-white"
-                   style="outline:none; text-decoration: none;">+ Edit Bio</a>
-
-                <div class="text-center mb-3">
-                    <a href="{{ route('profile.edit') }}" class="btn btn-light text-dark w-100 mb-2">Edit Profile</a>
-                </div>
-                <div class="text-center mb-3">
-                    <a href="" class="btn btn-light text-dark w-100 mb-2">Add Products</a>
-                </div>
-                <div class="text-center mb-3">
-                    <a href="" class="btn btn-light text-dark w-100 mb-2">View Feedbacks</a>
-                </div>
-
-                <div class="text-center mb-3">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-light text-dark w-100 mb-2">
-                            {{ __('Logout') }}
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Add your CSS for floating button -->
+<!-- Floating Button Style and JS -->
 <style>
     .float-button {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        z-index: 9999; /* Ensure it's on top */
-        transition: all 0.3s ease;
-        display: none; /* Hide by default */
-    }
-
-    .show {
-        display: block; /* Show the button */
+        z-index: 9999;
+        transition: all 0.3s;
     }
 </style>
 
-<!-- JavaScript for floating button -->
 <script>
-    window.onscroll = function() {
-        toggleFloatButton();
-    };
+    const floatButton = document.getElementById('floatButton');
+    const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
 
-    function toggleFloatButton() {
-        var button = document.getElementById("floatButton");
-        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-            button.classList.add("show");
-        } else {
-            button.classList.remove("show");
-        }
-    }
+    floatButton.addEventListener('click', function () {
+        profileModal.show();
+    });
 </script>
 
-<!-- Font Awesome for star icons -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
-
-@endcan
 @endsection
+@endcan

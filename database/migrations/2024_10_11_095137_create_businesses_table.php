@@ -20,12 +20,15 @@ return new class extends Migration
             $table->string('fullName')->nullable(); 
             $table->string('fullAddress'); 
             
+            // Owner details
             $table->string('ownerHouseNo'); 
             $table->string('ownerStreetAddress'); 
             $table->string('ownerCity'); 
             $table->string('ownerEmail'); 
             $table->string('ownerPhone'); 
             $table->date('dateOfApplication'); 
+            
+            // Business details
             $table->string('businessName'); 
             $table->string('tinNumber'); 
             $table->string('businessNo');
@@ -33,13 +36,22 @@ return new class extends Migration
             $table->string('businessCity'); 
             $table->string('businessEmail');
             $table->string('businessPhone'); 
+            $table->string('status')->default('Unclaimed');
+
+            // Coordinates (new fields)
+            $table->decimal('latitude', 10, 8)->nullable();   // Latitude column with precision
+            $table->decimal('longitude', 11, 8)->nullable();  // Longitude column with precision
+
+            // Foreign key to users table
+            $table->unsignedBigInteger('user_id')->nullable(); // Nullable since businesses are unclaimed initially
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
             $table->timestamps();
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('businesses');
     }
 };
-

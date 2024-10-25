@@ -26,13 +26,14 @@ class BusinessesImport implements ToModel
         }
 
         $fullName = trim($row[0] . ' ' . ($row[1] ?? '') . ' ' . $row[2]);
+        $fullAddress = trim($row[5] . ' ' . ($row[6] ?? '') . ' ' . $row[7]);
 
         return new businesses([
             'firstName' => $row[0],
             'middleName' => $row[1] ?? null,
             'lastName' => $row[2],
             'fullName' => $fullName,
-            'fullAddress' => $row[4],
+            'fullAddress' => $fullAddress,
             'ownerHouseNo' => $row[5],
             'ownerStreetAddress' => $row[6],
             'ownerCity' => $row[7],

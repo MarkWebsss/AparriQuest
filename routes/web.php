@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserRequestController;
 use App\Http\Controllers\Admin\AdminRequestController;
-use App\Http\Controllers\Owners\OwnerRequestController;
 use App\Http\Controllers\Owners\CTRLimport;
 use App\Http\Controllers\Admin\CTRLbusiness;
 use App\Http\Controllers\Auth\AuthController;
@@ -15,15 +14,14 @@ use App\Http\Controllers\Admin\DashCTRL;
 use App\Http\Controllers\Owners\CTRLOwners;
 use App\Http\Controllers\Owners\ProductController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\Users\MapController;
 
 
-
-// Route for the landing page
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page');
+Route::get('/search', [LandingPageController::class, 'search'])->name('search');
+
+Route::post('/claim-shop', [CTRLowners::class, 'claimShop'])->name('claim-shop');
 
 // Authentication routes
 require __DIR__ . '/auth.php';
@@ -52,9 +50,16 @@ Route::get('/dashboard', function () {
     // Redirect based on user role
     foreach ($user->roles as $role) {
         if ($role->name == "admin") {
-            return app(DashCTRL::class)->index();
+            return app(DashCTRL::class)->index(); // Admin dashboard logic
         } elseif ($role->name == "owner") {
-            return view('owner.dashboard');
+            // Fetch the business data for the owner
+            $userId = Auth::id();
+            $business = \App\Models\Admin\businesses::where('user_id', $userId)
+                ->where('status', 'Claimed')
+                ->first();
+
+            // Pass $business to the owner dashboard view
+            return view('owner.dashboard')->with('business', $business);
         }
     }
 
@@ -88,11 +93,10 @@ Route::prefix('owner')->middleware(['auth', 'can:owner-access'])->group(function
     Route::get('/register', [RegisteredUserController::class, 'createBusiness'])->name('owner.register');
     Route::post('/register', [RegisteredUserController::class, 'storeBusiness'])->name('register.business.submit'); 
 
-    Route::get('/owner/dashboard', [CTRLOwners::class, 'index'])->name('owner.dashboard');
+    Route::get('/dashboard', [CTRLOwners::class, 'index'])->name('owner.dashboard');
+    Route::post('/claim-shop', [CTRLOwners::class, 'claimShop'])->name('claim-shop');
+    
     Route::resource('owner/products', ProductController::class);
-
-    Route::get('/manage-requests', [OwnerRequestController::class, 'index'])->name('owner.manage-requests.index');
-    // Add other owner-specific routes here
 });
 
 // User routes
@@ -100,6 +104,11 @@ Route::namespace('App\Http\Controllers\Users')->prefix('users')->name('users.')-
     Route::resource('/feedback', 'CTRLFeedbacks')->except(['update', 'edit', 'destroy']);
     Route::get('/myfeedbacks', 'CTRLFeedbacks@myfeedback')->name('myfeedback');
     Route::resource('/products', 'CTRLproducts');
+
+    Route::get('/products/{id}', 'CTRLproducts@show')->name('products.productview');
     Route::get('/searchproducts', 'CTRLproducts@searchproducts')->name('searchproducts');
     Route::resource('/shopEdit', 'ShopController');
+
+    Route::get('/map', 'MapController@index')->name('map.index');
+    Route::get('/map/track/{id}', [MapController::class, 'trackProduct'])->name('map.track');
 });
