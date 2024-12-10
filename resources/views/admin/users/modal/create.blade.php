@@ -104,15 +104,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="dateOfApplication">Date of Application:</label>
-                                            <input type="date" class="form-control" name="dateOfApplication" id="dateOfApplication" required>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -127,12 +118,6 @@
                                         <div class="form-group">
                                             <label for="businessName">Business Name:</label>
                                             <input type="text" class="form-control" name="businessName" id="businessName" required placeholder="Enter the Business Name">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="tinNumber">Tin Number:</label>
-                                            <input type="text" class="form-control" name="tinNumber" id="tinNumber" required placeholder="Enter Tin Number">
                                         </div>
                                     </div>
                                 </div>

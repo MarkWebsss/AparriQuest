@@ -41,7 +41,7 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='user'></box-icon>
                 </div>
-                <x-text-input id="email" class="form-control block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="Enter your Email" />
+                <x-text-input id="email" class="form-control block mt-1 w-full p-2" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" placeholder="Enter your Email" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -53,7 +53,7 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='lock'></box-icon>
                 </div>
-                <x-text-input id="password" class="form-control block mt-1 w-full" type="password" name="password" required autocomplete="current-password" placeholder="Enter your Password" />
+                <x-text-input id="password" class="form-control block mt-1 w-full p-2" type="password" name="password" required autocomplete="current-password" placeholder="Enter your Password" />
             </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>

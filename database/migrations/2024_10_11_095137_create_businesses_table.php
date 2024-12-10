@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('businesses', function (Blueprint $table) {
             $table->id();
-        
+
             // Original fields
             $table->string('firstName');
             $table->string('middleName')->nullable(); 
@@ -25,12 +25,11 @@ return new class extends Migration
             $table->string('ownerStreetAddress'); 
             $table->string('ownerCity'); 
             $table->string('ownerEmail'); 
-            $table->string('ownerPhone'); 
-            $table->date('dateOfApplication'); 
+            $table->string('ownerPhone');
             
             // Business details
             $table->string('businessName'); 
-            $table->string('tinNumber'); 
+            $table->integer('view_count')->default(0);
             $table->string('businessNo');
             $table->string('BusStreetAddress');
             $table->string('businessCity'); 
@@ -38,15 +37,17 @@ return new class extends Migration
             $table->string('businessPhone'); 
             $table->string('status')->default('Unclaimed');
 
-            // Coordinates (new fields)
-            $table->decimal('latitude', 10, 8)->nullable();   // Latitude column with precision
-            $table->decimal('longitude', 11, 8)->nullable();  // Longitude column with precision
+            // Coordinates
+            $table->decimal('latitude', 10, 8)->nullable();   
+            $table->decimal('longitude', 11, 8)->nullable();  
 
             // Foreign key to users table
-            $table->unsignedBigInteger('user_id')->nullable(); // Nullable since businesses are unclaimed initially
+            $table->unsignedBigInteger('user_id')->nullable(); 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
+            // Timestamps (created_at and updated_at)
             $table->timestamps();
+            $table->string('shopLogo')->nullable();
         });
     }
 
@@ -55,3 +56,4 @@ return new class extends Migration
         Schema::dropIfExists('businesses');
     }
 };
+

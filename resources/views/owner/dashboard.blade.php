@@ -1,22 +1,20 @@
 @can('owner-access')
 @extends('layouts.Owner.app')
-
+@section('page-title', 'Dashboard')
 @section('content')
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="py-10">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="p-6 text-gray-900">
             <div class="container">
-                <div class="row mb-4">
+                <div class="row">
                     @if(!$business)
                     <div class="alert alert-warning">
                         <h4 class="text-center">No Shop Claimed</h4>
                         <p class="text-center">You have not claimed a shop yet. Please claim your shop using the TIN number provided during registration.</p>
                         <form action="{{ route('claim-shop') }}" method="POST" class="d-flex justify-content-center">
                             @csrf
-                            <input type="text" name="tinNumber" class="form-control w-50" placeholder="Enter TIN Number" required>
+                            <input type="text" name="businessName" class="form-control w-50" placeholder="Enter TIN Number" required>
                             <button type="submit" class="btn btn-success ml-2">Claim Shop</button>
                         </form>
                         @if ($errors->any())
@@ -27,113 +25,198 @@
                                 @endforeach
                             </ul>
                         </div>
-                    @endif
+                        @endif
                     </div>
                     @else
-                    <div class="col-sm-8">
-                        <h1 class="mb-3">Welcome, {{ Auth::user()->name }}</h1>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="pt-2 ps-2 flex-grow-1 text-lg">Welcome, {{ Auth::user()->name }}!</h2>
+                        <div id="clock" class="border rounded p-3 bg-success text-white" style="font-size: 1.2rem; right: 70px; z-index: 1000;">
+                            <span id="current-time" class="font-weight-bold"></span>
+                        </div>
+                        <script>
+                            function updateClock() {
+                                const clockElement = document.getElementById('current-time');
+                                const now = new Date();
+                                const hours = now.getHours().toString().padStart(2, '0');
+                                const minutes = now.getMinutes().toString().padStart(2, '0');
+                                const seconds = now.getSeconds().toString().padStart(2, '0');
+                                const timeString = `${hours}:${minutes}:${seconds}`;
+                                clockElement.textContent = timeString;
+                            }
+                            setInterval(updateClock, 1000);
+                            updateClock();
+                        </script>
                     </div>
                 </div>
 
-                <!-- Claimed business details -->
-
-                <div class="row">
-                    <!-- Views Line Chart -->
-                    <div class="col-lg-4 col-md-6 mb-3">
-                        <div class="card shadow">
-                            <div class="card-header text-center"><b>Views</b></div>
+                <div class="row d-flex align-items-stretch">
+                    <!-- Shop Views Card -->
+                    <div class="col-lg-4 col-md-4 mb-3">
+                        <div class="card shadow border-light hover-card equal-height">
+                            <div class="card-header text-center bg-primary text-white"><b>Shop Views</b></div>
                             <div class="card-body">
-                                <canvas id="myLineChart"></canvas>
+                                <h2>{{ $business->businessName }}</h2>
+                                <p>Total Views: <span class="font-weight-bold"><strong>{{ $viewCount }}</strong></span></p>
+                                <a href="{{ route('owner.business.edit', ['id' => $business->id]) }}">My Business Profile</a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Customer Ratings Breakdown -->
-                    <div class="col-lg-4 col-md-6 mb-3">
-                        <div class="card shadow">
-                            <div class="card-header text-center"><b>Customer Ratings Breakdown</b></div>
-                            <div class="card-body">
+                    <!-- Customer Ratings Card -->
+                    <div class="col-lg-4 col-md-4 mb-3">
+                        <div class="card shadow border-light hover-card equal-height">
+                            <div class="card-header text-center bg-warning text-white"><b>Customer Ratings Breakdown</b></div>
+                            <div class="card-body mb-2">
                                 <div class="text-center mb-3">
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star-half-alt text-warning"></i>
-                                    <p class="mt-2">No Rating</p>
+                                    @if($feedbacks->isEmpty())
+                                        <p>No feedback yet for your Shop.</p>
+                                    @else
+                                        <div class="star-rating">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <span class="star {{ $i <= $averageRating ? 'selected' : '' }}">&#9733;</span>
+                                            @endfor
+                                        </div>
+                                        <p>Average Rating: {{ number_format($averageRating, 1) }}</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Profile Card -->
-                    <div class="col-lg-4 col-md-6 mb-3">
-                        <div class="card bg-success text-white shadow">
-                            <div class="card-header text-center">Profile</div>
-                            <div class="text-center p-3">
-                                <img src="{{ asset('logo/logo1.png') }}" alt="Logo" class="logo rounded-circle mb-3" width="100" height="100">
-                                <a href="#" class="d-block text-white mb-2">+ Edit Bio</a>
-                                <a href="{{ route('profile.edit') }}" class="btn btn-light text-dark w-100 mb-2">Edit Profile</a>
-                                <a href="{{ route('products.index') }}" class="btn btn-light text-dark w-100 mb-2">Add Products</a>
-                                <a href="#" class="btn btn-light text-dark w-100 mb-2">View Feedbacks</a>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="btn btn-light text-dark w-100">Logout</button>
-                                </form>
+                    <!-- Product Statistics Card -->
+                    <div class="col-lg-4 col-md-4 mb-3">
+                        <div class="card shadow border-light hover-card equal-height">
+                            <div class="card-header text-center bg-success text-white"><b>Product Statistics</b></div>
+                            <div class="card-body mb-4">
+                                <div class="row">
+                                    <div class="col-6 align-self-center">
+                                        <h6 class="">Total Products</h6>
+                                        <h1 class="font-weight-bold">{{ $productCount }}</h1>
+                                        <p>products</p>
+                                    </div>
+
+                                    <div class="col-6 align-self-center">
+                                        <h6 class="font-weight-bold">Status</h6>
+                                        <p class="mt-2">Available: <span class="text-success">{{ $availableStockCount }}</span></p>
+                                        <p class="mt-2">Out of Stock: <span class="text-danger">{{ $outOfStockCount }}</span></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                @if($business)
+                <div class="row mb-4">
+                    <div class="col-lg-12">
+                        <div class="card shadow border-light">
+                            <div class="card-header text-center bg-info text-white"><b>Shop Views Per Second</b></div>
+                            <div class="card-body">
+                                <canvas id="myLineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const shopViewsUrl = "{{ route('owner.shop.views.graph') }}"; 
+
+                        fetch(shopViewsUrl)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    console.error(data.error);
+                                    return;
+                                }
+
+                                const ctx = document.getElementById('myLineChart').getContext('2d');
+                                new Chart(ctx, {
+                                    type: 'line', 
+                                    data: {
+                                        labels: data.timestamps,
+                                        datasets: [{
+                                            label: 'Daily Shop Views',
+                                            data: data.viewCounts,
+                                            borderColor: 'rgba(75, 192, 192, 1)',
+                                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                            fill: false,
+                                            borderWidth: 2,
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            x: { title: { display: true, text: 'Date (YYYY-MM-DD)' }},
+                                            y: { title: { display: true, text: 'Views' }, ticks: { stepSize: 1 }}
+                                        }
+                                    }
+                                });
+                            })
+                            .catch(error => console.error('Error fetching data:', error));
+                    });
+                </script>
                 @endif
             </div>
         </div>
     </div>
 </div>
+@endif
 
-<!-- Views Graph Script -->
-<script>
-    var ctx = document.getElementById('myLineChart').getContext('2d');
-    var myLineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-            datasets: [{
-                label: 'Shop Views/Visits',
-                data: [100, 200, 150, 200, 150, 50],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
-
-<!-- Floating Button Style and JS -->
 <style>
-    .float-button {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 9999;
-        transition: all 0.3s;
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .star-rating {
+        display: inline-block;
+    }
+
+    .star {
+        color: gray; /* Default color for unselected stars */
+        font-size: 24px; /* Size of the stars */
+        margin: 0 2px; /* Space between stars */
+    }
+
+    .star.selected {
+        color: gold; /* Color for selected stars */
     }
 </style>
 
 <script>
-    const floatButton = document.getElementById('floatButton');
-    const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mask the name in the feedback
+        const maskedNames = document.querySelectorAll('.masked-name');
 
-    floatButton.addEventListener('click', function () {
-        profileModal.show();
+        maskedNames.forEach(function(element) {
+            const fullName = element.getAttribute('data-name');
+            const maskedName = maskName(fullName);
+            element.textContent = maskedName;
+        });
+
+        // Function to mask the name
+        function maskName(name) {
+            const nameParts = name.split(' ');
+            const maskedNameParts = nameParts.map(part => {
+                if (part.length > 2) {
+                    return part[0] + '*'.repeat(part.length - 1);
+                }
+                return part; // Keep initials or short parts unchanged
+            });
+            return maskedNameParts.join(' ');
+        }
     });
 </script>
-
+<style>
+    .equal-height {
+    height: 100%;
+}
+</style>
 @endsection
 @endcan

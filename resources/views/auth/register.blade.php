@@ -1,7 +1,7 @@
 <x-guest-layout>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <div class="text-center">
-        <img src="{{ asset('aparriquest/aparri-quest-logo.jpg') }}" alt="Logo" 
+        <img src="{{ asset('logo/logo1.png') }}" alt="Logo" 
         class="logo rounded-circle mx-auto" width="100" height="100">
 </div>
     <style>
@@ -47,7 +47,7 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='user'></box-icon>
                 </div>
-                <x-text-input id="name" class="form-control block mt-1" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+                <x-text-input id="name" class="form-control block mt-1 p-2" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             </div>
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
@@ -59,7 +59,7 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='envelope'></box-icon>
                 </div>
-                <x-text-input id="email" class="form-control block mt-1" type="email" name="email" :value="old('email')" required autocomplete="username" />
+                <x-text-input id="email" class="form-control block mt-1 p-2" type="email" name="email" :value="old('email')" required autocomplete="username" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -71,7 +71,7 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='lock'></box-icon>
                 </div>
-                <x-text-input id="password" class="form-control block mt-1" type="password" name="password" required autocomplete="new-password" />
+                <x-text-input id="password" class="form-control block mt-1 p-2" type="password" name="password" required autocomplete="new-password" />
             </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
@@ -83,7 +83,7 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='lock-open'></box-icon>
                 </div>
-                <x-text-input id="password_confirmation" class="form-control block mt-1" type="password" name="password_confirmation" required autocomplete="new-password" />
+                <x-text-input id="password_confirmation" class="form-control block mt-1 p-2" type="password" name="password_confirmation" required autocomplete="new-password" />
             </div>
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>

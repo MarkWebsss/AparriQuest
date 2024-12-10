@@ -2,103 +2,269 @@
 
 @section('content')
 <style>
-    .product-column {
-        padding: 15px;
-        margin-bottom: 20px;
-    }
+    /* General Page Layout */
+.container-fluid {
+    padding: 0 30px;
+}
 
-    /* Custom card container */
-    .custom-card {
-        border: 1px solid #dee2e6;
-        border-radius: .25rem;
-        overflow: hidden;
-        background-color: #fff;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        transition: box-shadow .15s ease-in-out;
-    }
+.row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
 
-    /* Custom hover effect for card */
-    .custom-card:hover {
-        box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-    }
+/* Sidebar Filter Section (Left Column) */
+.filter-column {
+    flex: 0 0 300px;
+    padding: 20px;
+    margin-right: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-    /* Image styling */
-    .custom-card img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
+.filter-column h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
 
-    /* Card body styling */
-    .custom-card-body {
-        padding: 15px;
-    }
+.filter-column .form-control {
+    margin-bottom: 15px;
+}
 
-    /* Card title */
-    .custom-card-body h5 {
-        margin-bottom: 10px;
-        font-size: 1.25rem;
-        color: #007bff;
-    }
+.filter-column .form-select {
+    margin-bottom: 15px;
+}
 
-    /* Card text for price and status */
-    .custom-card-body p {
-        margin-bottom: 10px;
-        font-size: 1rem;
-        color: #6c757d;
-    }
+.filter-column .btn {
+    width: 100%;
+}
 
-    /* Button style */
-    .custom-card-body .btn {
-        margin-top: 10px;
-        background-color: #007bff;
-        border-color: #007bff;
-        color: #fff;
-    }
+.col {
+    flex: 1;
+}
 
-    .custom-card-body .btn:hover {
-        background-color: #0056b3;
-        border-color: #004085;
+.shop-column {
+    padding: 15px;
+    flex: 0 0 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.custom-card {
+    border: 1px solid #dee2e6;
+    border-radius: .25rem;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow .15s ease-in-out;
+    padding: 20px;
+    height: 100%;
+}
+
+.custom-card:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Card Body */
+.custom-card-body {
+    flex-grow: 1;
+}
+
+/* Card Title */
+.card-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #343a40;
+}
+
+/* Card Text */
+.card-text {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+/* Products List inside each Shop */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul li {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #495057;
+}
+
+ul li span {
+    font-weight: 600;
+}
+
+/* Button Style */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+    padding: 8px 20px;
+    text-align: center;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Empty State for No Shops */
+.text-center p {
+    font-size: 1.2rem;
+    color: #999;
+    margin-top: 20px;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .shop-column {
+        flex: 0 0 48%; /* Two columns on medium screens */
+        max-width: 48%;
     }
+}
+
+@media (max-width: 768px) {
+    .shop-column {
+        flex: 0 0 100%; /* One column on small screens */
+        max-width: 100%;
+    }
+}
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.footer p {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
 </style>
 
-<div class="row">
-    <div class="col-lg-12 text-center mt-3">
-        <h3>Search Results for "{{ request()->input('query') }}"</h3>
-    </div>
-</div>
-
-<!-- Back to Products Button -->
-<div class="row">
-    <div class="col-lg-12 text-center mt-3">
-        <a href="{{ route('users.products.index') }}" class="btn btn-secondary">Back to Products</a>
-    </div>
-</div>
-
-<!-- Display message if no products are found -->
-@if($products->isEmpty())
+<div class="container-fluid mt-5">
     <div class="row">
-        <div class="col-lg-12 text-center mt-3">
-            <p>No products found for "{{ request()->input('query') }}". Please try a different search.</p>
+        <!-- Sidebar filter section (Left column) -->
+        <div class="filter-column">
+            <h3 class="filter-heading">Shops</h3>
+            <form action="{{ route('users.search.shop') }}" method="get">
+                <input type="text" name="query" class="form-control" placeholder="Search Products or Keywords" value="{{ request('query') }}">
+                <select name="sort" class="form-select">
+                    <option value="">Sort By</option>
+                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
+                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+
+        <!-- Shops Display (Right Column) -->
+        <div class="col">
+            <div class="row d-flex flex-wrap">
+                <!-- Display message if no shops are found -->
+                @if($shops->isEmpty())
+                    <div class="col-lg-12 text-center mt-3">
+                        <p>No shops found selling "{{ request()->input('query') }}".</p>
+                    </div>
+                @else
+                    @foreach ($shops as $shop)
+                        <div class="shop-column">
+                            <div class="custom-card">
+                                <div class="custom-card-body">
+                                <h2 class="card-title d-flex justify-content-between align-items-center">
+                                    {{ $shop->businessName }}
+                                    <a href="{{ route('users.view.shop', $shop->user->business->id) }}" class="btn btn-primary">
+                                        View Shop
+                                    </a>
+                                </h2>
+                                    
+                                    <p class="card-text">Location: {{ $shop->fullAddress }}</p>
+                                    
+                                    <h6>Shop Rating: 
+                                        @if(is_numeric($shop->averageRating))
+                                            {{ number_format($shop->averageRating, 1) }} / 5
+                                            <span>
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    @if($i <= floor($shop->averageRating))
+                                                        ★
+                                                    @else
+                                                        ☆
+                                                    @endif
+                                                @endfor
+                                            </span>
+                                        @else
+                                            {{ $shop->averageRating }}
+                                        @endif
+                                    </h6>
+
+                                    <!-- Product List displayed in rows using Bootstrap grid system -->
+                                    <h4>Products:</h4>
+                                        <div class="d-flex flex-row justify-content-start flex-wrap">
+                                            @foreach ($shop->user->products->take(4) as $product)
+                                                <div class="product-card text-center me-3">
+                                                    <center>
+                                                    <img src="{{ $product->image && file_exists(public_path('storage/' . $product->image)) ? asset('storage/' . $product->image) : asset('logo/NOIMAGE.png') }}" 
+                                                        alt="{{ $product->name }}" 
+                                                        style="object-fit: cover; border-radius: 10px; margin-bottom: 10px;"
+                                                        class="w-75 h-20">
+                                                        </center>
+                                                    <p>{{ $product->name }}</p>
+                                                    <p>₱{{ number_format($product->price, 2) }}</p>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </div>
         </div>
     </div>
-@else
-    <div class="row px-5">
-        @foreach ($products as $product)
-            <div class="product-column col-md-3">
-                <div class="custom-card">
-                    <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
-                    <div class="custom-card-body">
-                        <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text">Price: {{ $product->price }}</p>
-                        <p class="card-text">Status: {{ $product->status }}</p>
-                        <p class="card-text">Shop: {{ $product->user->name }}</p>
-                        <a href="{{ route('users.products.productview', $product->id) }}" class="btn btn-primary">View Details</a>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-@endif
+</div>
+
+
+<!-- Footer -->
+<div class="footer">
+    <p>&copy; {{ date('Y') }} AparriQuest. All rights reserved. | 
+        <a href="">Privacy Policy</a> | 
+        <a href="">Terms & Conditions</a>
+    </p>
+</div>
+<style>
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+</style>
 
 @endsection

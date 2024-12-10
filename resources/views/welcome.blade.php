@@ -6,8 +6,14 @@
     <title>{{ config('app.name', 'AparriQuest') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+
     <link rel="stylesheet" href="{{ asset('build/bootstrap/bootstrap.v5.3.2.min.css') }}">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     <style>
         #welcome {
@@ -137,7 +143,7 @@
                 <div style="width: 25px; height: 3px; background-color: #fff; border-radius: 5px; margin: 5px auto;"></div>
             </button>
                 <div class="logo-container">
-                    <a href="#"><img src="{{ asset('logo/combinelogo.png') }}" alt="" id="logo1" class=""></a>
+                    <a href=""><img src="{{ asset('logo/combinelogo.png') }}" alt="" id="logo1" class=""></a>
                 </div>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
@@ -148,10 +154,13 @@
                         <a href="#about" class="nav-link text-dark fw-bold">About</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#contact" class="nav-link text-dark fw-bold">Contact Us</a>
+                        <a href="#contact-us" class="nav-link text-dark fw-bold">Contact Us</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link text-dark fw-bold">Feedbacks</a>
+                        <a href="#products" class="nav-link text-dark fw-bold">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#shops" class="nav-link text-dark fw-bold">Shops</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -163,25 +172,112 @@
         </div>
     </nav>
 
-    <!-- Welcome Section -->
-    <section id="welcome" style="height: 100vh;">
-        <div class="con1 container d-flex flex-column justify-content-center align-items-center vh-100 text-center custom-container">
-            <img src="{{ asset('logo/textlogo.png') }}" alt="" class="pb-3 img-fluid">
-            <h5 class="pb-3 outlined-text fw-bold">Find your shop anytime, anywhere!</h5>
-            <p class="outlined-text fw-bold">Don’t know the locations of different shops in Aparri? Just search the product that you need!</p>
+<!--Animate on Scroll Script-->
+<script>
+  AOS.init();
+</script>
 
-            <!-- Replacing search bar with two buttons -->
-            <div class="d-flex flex-column align-items-center mt-4">
-                <p class="mb-2 fw-bold" style="font-size: 1.2rem;">Register Here as:</p>
-                <div class="d-flex justify-content-center">
-                    <a href="{{ route('register') }}" class="btn bg-success mx-3 px-4 py-2">User</a>
-                    <a href="{{ route('register.business') }}" class="btn bg-success mx-3 px-4 py-2">Owner</a>
+<section id="welcome" data-aos="fade-up" style="height: 100vh;">
+    <div id="welcomeCarousel" class="carousel slide h-100" data-bs-ride="carousel" style="width: 100%;">
+        <div class="carousel-inner h-100">
+            <!-- First Slide: Logo and Welcome Text -->
+            <div class="carousel-item active h-100">
+                <div class="d-flex flex-column justify-content-center align-items-center vh-100 text-center">
+                    <form action="{{ route('search') }}" method="get" class="w-100 mb-4">
+                        <div class="input-group">
+                            <input type="search" name="query" class="form-control" placeholder="Search Shop" aria-label="Search Products">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </form>
+                    <img src="{{ asset('logo/textlogo.png') }}" alt="Logo" class="pb-3 img-fluid">
+                    <h5 class="pb-3 outlined-text fw-bold">Find your shop anytime, anywhere!</h5>
+                    <p class="outlined-text fw-bold">Don’t know the locations of different shops in Aparri? Just search the product that you need!</p>
                 </div>
             </div>
-        </div>
-    </section>
+            
+            <style>
+/* Default styling (applies to all screen sizes) */
+.shop-card {
+    width: 100%;
+}
 
-    <section id="about" class="bg-success">
+@media (min-width: 768px) {
+    .shop-card {
+        width: 48%; 
+    }
+}
+
+@media (min-width: 992px) {
+    .shop-card {
+        width: 30%;
+    }
+}
+</style>
+
+<div class="carousel-item h-100">
+    <div class="d-flex flex-column justify-content-center align-items-center text-center m-4">
+        <h3 class="card-header pb-3 outlined-text fw-bold" style="font-size: 2rem;">Top 3 Most Viewed Shops</h3>
+        @if($topShops->isEmpty())
+            <p style="font-size: 1.2rem;">No shops have been viewed yet.</p>
+        @else
+            <div class="row w-100 justify-content-center g-4">
+                @foreach($topShops as $index => $shop)
+                    <div class="col-12 col-sm-6 col-md-4 shop-card"> <!-- Apply shop-card class -->
+                        <div class="card shadow-lg border-light rounded h-100">
+                            <div class="card-body text-center">
+                                <div>
+                                    <img src="{{ $shop->shopLogo ? asset('storage/' . $shop->shopLogo) : asset('logo/user.png') }}" 
+                                         alt="{{ $shop->businessName }} Logo" 
+                                         class="img-fluid rounded-circle mx-auto d-block" 
+                                         style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
+                                <h5 class="fs-4">
+                                    @if($index === 0)
+                                        <i class="fas fa-trophy text-warning"></i>
+                                    @elseif($index === 1)
+                                        <i class="fas fa-trophy text-secondary"></i>
+                                    @elseif($index === 2)
+                                        <i class="fas fa-trophy text-bronze"></i>
+                                    @endif
+                                    {{ $shop->businessName }}
+                                </h5>
+                                <p class="text-muted">Views: {{ $shop->view_count }}</p>
+                                @if(auth()->check())
+                                    <a href="{{ route('products.productview', $shop->id) }}" class="btn btn-primary">View Details</a>
+                                @else
+                                    <a href="javascript:void(0);" class="btn btn-primary" onclick="showLoginAlert(event)">View Details</a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</div>
+        </div>
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#welcomeCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#welcomeCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+
+
+<script>
+    var carouselElement = document.querySelector('#welcomeCarousel');
+    var carousel = new bootstrap.Carousel(carouselElement, {
+        interval: 5000,
+        ride: 'carousel'
+    });
+</script>
+
+    <section id="about"  class="bg-success">
         <div class="container">
             <h2 class="text-center mb-4 text-white">About AparriQuest</h2>
             <p class="text-center mb-5 text-white">AparriQuest helps you locate various shops and products in Aparri, making your shopping experience seamless and efficient.</p>
@@ -219,154 +315,421 @@
             </div>
         </div>
     </section>
-
     <style>
-    /* Custom class for 5 products per row */
+    /* Flexbox for Responsive Layout */
+    .product-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center; /* Ensures products are centered */
+    }
+
     .product-column {
-        width: 20%;
+        flex: 0 0 calc(100% / 5 - 10px); /* 5 products per row */
+        max-width: calc(100% / 5 - 10px);
         padding: 10px;
+        box-sizing: border-box;
     }
 
+    /* Adjust product image size */
     .product-column img {
-        height: 150px; 
-        object-fit: cover; 
+        height: 150px;
+        width: 100%;
+        object-fit: cover;
     }
 
-    /* Media queries for responsiveness */
+    /* Responsive Breakpoints */
     @media (max-width: 1200px) {
         .product-column {
-            width: 25%; 
+            flex: 0 0 calc(100% / 4 - 10px); /* 4 products per row */
+            max-width: calc(100% / 4 - 10px);
         }
     }
 
     @media (max-width: 992px) {
         .product-column {
-            width: 33.33%; 
+            flex: 0 0 calc(100% / 3 - 10px); /* 3 products per row */
+            max-width: calc(100% / 3 - 10px);
         }
     }
 
     @media (max-width: 768px) {
         .product-column {
-            width: 50%; 
+            flex: 0 0 calc(50%); /* 2 products per row */
+            max-width: calc(50%);
         }
     }
 
     @media (max-width: 576px) {
         .product-column {
-            width: 100%; 
+            flex: 0 0 calc(50% - 5px); /* 2 products per row (smallest screens) */
+            max-width: calc(50%);
         }
     }
-
-    .product-column img {
-        height: 200px; 
-        width: 100%; 
-        object-fit: cover; 
-    }
-
-    /* Ensure the section grows with content */
-    section {
-        padding: 60px 0; 
-        overflow: visible; 
+    section{
+        padding: 20px;
     }
 </style>
 
 <section id="products">
-        <div class="container">
+    <div class="container">
         <div class="row">
-            <div class="col-lg-7">
-                <h3 class="text-center">Available Products</h3>
-            </div>
-
-            <div class="col-lg-5">
-                <!-- Search Box -->
-                <form action="{{ route('search') }}" method="get" class="d-flex justify-content-center align-items-center">
-                    <div class="input-group">
-                        <input type="search" name="query" class="form-control" placeholder="Search Products" aria-label="Search Products">
-                        <button type="submit" class="btn btn-primary">Search</button>
+            <h3 class="text-center card bg-success p-4 text-white" id="banner">Available Products</h3>
+            <div class="product-container">
+                @if($products->isEmpty())
+                    <div class="col-12 text-center">
+                        <p>No products added yet.</p>
                     </div>
-                </form>
-            </div>
-            
-            <div class="row">
-                @foreach ($products as $product)
-                    <div class="product-column col-md-3">
-                        <div class="card" style="width: 100%;">
-                            <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text">Price: {{ $product->price }}</p>
-                                <p class="card-text">Status: {{ $product->status }}</p>
-                                <a href="#" class="btn btn-primary">View Details</a>
+                @else
+                    @foreach ($products as $product)
+                        <div class="product-column">
+                            <div class="card">
+                                <img src="{{ $product->image && file_exists(public_path('storage/' . $product->image)) ? asset('storage/' . $product->image) : asset('logo/NOIMAGE.png') }}" 
+                                     class="card-img-top" 
+                                     alt="{{ $product->name }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $product->name }}</h5>
+                                    <p class="card-text">Price: ₱{{ $product->price }}</p>
+                                    @if ($product->status === 'Available')
+                                        <p class="card-text" style="color: green;">Status: {{ ucfirst($product->status) }}</p>
+                                    @else
+                                        <p class="card-text" style="color: red;">Status: {{ ucfirst($product->status) }}</p>
+                                    @endif
+
+                                    @if(auth()->check())
+                                        <a href="{{ route('products.productview', $product->id) }}" class="btn btn-primary">View Details</a>
+                                    @else
+                                        <a href="javascript:void(0);" class="btn btn-primary" onclick="showLoginAlert(event)">View Details</a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                @endif
+            </div>
+            <div class="pagination-wrapper">
+                {{ $products->links('pagination::bootstrap-4') }}
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
 
 <style>
-/* Remove margin between <p> elements in product cards */
-.product-column p {
-    margin: 0; /* Removes margin between <p> tags */
+.pagination {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    margin-top: 20px; 
+    list-style: none;
+    padding: 0;
 }
 
-/* Add space after product name */
+.pagination a, .pagination span {
+    display: inline-block;
+    text-decoration: none;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    color: #007bff;
+    margin: 0 5px; 
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.pagination .active span {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.pagination a:hover {
+    background-color: #0056b3;
+    color: #fff;
+    border-color: #0056b3;
+}
+
+.pagination .disabled span {
+    background-color: #e9ecef;
+    color: #6c757d;
+    border-color: #e9ecef;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+</style>
+<section id="shops">
+<div class="container my-5">
+    <h2 class="text-center card bg-success p-4 text-white">Shops You May Like</h2>
+    
+    <div class="row pt-2">
+        @foreach ($businesses as $business)
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <img 
+                        src="{{ $business->shopLogo ? asset('storage/' . $business->shopLogo) : asset('logo/user.png') }}" 
+                        alt="{{ $business->business_name }}" 
+                        class="card-img-top" 
+                        style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $business->businessName }}</h5>
+                        <p class="card-text">{{ Str::limit($business->description, 100) }}</p>
+                        <p class="card-text">
+                            Average Rating: 
+                            @if($business->averageRating)
+                                {{ $business->averageRating }}
+                            @else
+                                No ratings yet
+                            @endif
+                        </p> <!-- Display average rating -->
+                        <a href="{{ route('business.index', $business->id) }}" onclick="showLoginAlert(event)" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4">
+        {{ $businesses->links() }}
+    </div>
+</div>
+</section>
+
+<section id="contact-us" class="bg-light">
+    <div class="container">
+        <!-- Meet the Team -->
+        <div class="row text-center">
+            <h3 class="mb-4">Meet Our Team</h3>
+            <!-- Team Member 1 -->
+            <div class="col-md-3">
+                <div class="card border-0">
+                    <img src="{{ asset('images/member1.jpg') }}" alt="Member 1" class="card-img-top rounded-circle img-fluid shadow-sm" style="width: 150px; height: 150px; margin: 0 auto;">
+                    <div class="card-body">
+                        <h5 class="card-title">Member 1</h5>
+                        <p class="card-text">Role: Developer</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 2 -->
+            <div class="col-md-3">
+                <div class="card border-0">
+                    <img src="{{ asset('images/member2.jpg') }}" alt="Member 2" class="card-img-top rounded-circle img-fluid shadow-sm" style="width: 150px; height: 150px; margin: 0 auto;">
+                    <div class="card-body">
+                        <h5 class="card-title">Member 2</h5>
+                        <p class="card-text">Role: Designer</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 3 -->
+            <div class="col-md-3">
+                <div class="card border-0">
+                    <img src="{{ asset('images/member3.jpg') }}" alt="Member 3" class="card-img-top rounded-circle img-fluid shadow-sm" style="width: 150px; height: 150px; margin: 0 auto;">
+                    <div class="card-body">
+                        <h5 class="card-title">Member 3</h5>
+                        <p class="card-text">Role: Content Manager</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Team Member 4 -->
+            <div class="col-md-3">
+                <div class="card border-0">
+                    <img src="{{ asset('images/member4.jpg') }}" alt="Member 4" class="card-img-top rounded-circle img-fluid shadow-sm" style="width: 150px; height: 150px; margin: 0 auto;">
+                    <div class="card-body">
+                        <h5 class="card-title">Member 4</h5>
+                        <p class="card-text">Role: Project Manager</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Login Alert Modal -->
+<div class="modal fade" id="loginAlertModal" tabindex="-1" aria-labelledby="loginAlertModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success">
+                <h5 class="modal-title" id="loginAlertModalLabel">Login Required</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                You must <strong>log in </strong>first to view the details of this product.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ route('login') }}" class="btn btn-success">Go to Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.product-column p {
+    margin: 0; 
+}
+
 .product-column h5 {
     margin-bottom: 5px;
 }
-</style>
+.modal-content {
+    border-radius: 8px; 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+}
 
-    <!-- Contact Section -->
-    <section id="contact" class="bg-primary">
-        <div>
-            <h2>Contact Us</h2>
-            <p>Have feedback? Feel free to reach out to us at <a href="mailto:support@aparriquest.com">support@aparriquest.com</a>.</p>
+.modal-header {
+    color: white;
+    border-bottom: none; 
+}
+
+.modal-title {
+    font-weight: 600; 
+}
+
+.modal-body {
+    font-size: 16px; 
+    color: #333; 
+}
+
+.modal-footer {
+    border-top: none; 
+}
+
+.btn-secondary {
+    background-color: #6c757d; 
+    border: none; 
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; 
+}
+
+.btn-close {
+    color: white; 
+}
+
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 1rem; 
+    }
+}
+footer {
+        margin-top: 50px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    footer a:hover {
+        text-decoration: underline;
+        color: #f8c93e; 
+    }
+
+    footer p {
+        line-height: 1.6;
+    }
+
+    footer .list-unstyled li {
+        margin-bottom: 8px; 
+    }
+</style> 
+
+    <!-- Footer Section -->
+<footer class="bg-dark text-white py-4">
+    <div class="container">
+        <div class="row">
+            <!-- About Section -->
+            <div class="col-md-4">
+                <h5 class="text-uppercase">About AparriQuest</h5>
+                <p class="small">
+                    AparriQuest is your trusted companion to discover shops and products in Aparri. We aim to make shopping easier, faster, and more convenient for everyone.
+                </p>
+            </div>
+
+            <!-- Quick Links Section -->
+            <div class="col-md-4">
+                <h5 class="text-uppercase">Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#about" class="text-white text-decoration-none">About</a></li>
+                    <li><a href="#contact" class="text-white text-decoration-none">Contact Us</a></li>
+                    <li><a href="#products" class="text-white text-decoration-none">Products</a></li>
+                </ul>
+            </div>
+
+            <!-- Social Media Section -->
+            <div class="col-md-4">
+                <h5 class="text-uppercase">Follow Us</h5>
+                <a href="#" class="text-white me-2">
+                    <box-icon name="facebook-circle" type="logo" size="md"></box-icon>
+                </a>
+                <a href="#" class="text-white me-2">
+                    <box-icon name="twitter" type="logo" size="md"></box-icon>
+                </a>
+                <a href="#" class="text-white me-2">
+                    <box-icon name="instagram" type="logo" size="md"></box-icon>
+                </a>
+                <a href="#" class="text-white me-2">
+                    <box-icon name="linkedin-square" type="logo" size="md"></box-icon>
+                </a>
+            </div>
         </div>
-    </section>
+
+        <div class="row mt-4">
+            <div class="col text-center">
+                <p class="mb-0 small">© {{ now()->year }} AparriQuest. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</footer>
 
     <!-- Scripts -->
     <script src="{{ asset('build/bootstrap/bootstrap.v5.3.2.min.js') }}"></script>
 
     <script>
-        // Detect scroll and apply 'shrink' class to the navbar
         window.addEventListener('scroll', function() {
             var navbar = document.getElementById('mainNavbar');
-            if (window.scrollY > 50) { // If scroll is more than 50px
+            if (window.scrollY > 50) { 
                 navbar.classList.add('shrink');
             } else {
                 navbar.classList.remove('shrink');
             }
         });
 
-        // Make cards visible when the About section comes into view
         const aboutSection = document.getElementById('about');
         const cards = document.querySelectorAll('.card');
 
-        // Fade-in effect for cards when entering the About section
         function fadeInCards() {
             cards.forEach((card, index) => {
                 setTimeout(() => {
-                    card.classList.add('visible'); // Add visible class
-                }, index * 200); // Stagger the fade-in effect
+                    card.classList.add('visible'); 
+                }, index * 200);
             });
         }
 
-        // Trigger fade-in when the section is in view
+        
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    fadeInCards(); // Trigger fade-in when the section is in view
-                    observer.unobserve(entry.target); // Unobserve after fade-in
+                    fadeInCards();
+                    observer.unobserve(entry.target); 
                 }
             });
         });
 
-        observer.observe(aboutSection); // Observe the About section
+        observer.observe(aboutSection); 
 
-        // Trigger fade-in on page load
-        window.addEventListener('load', fadeInCards); // Trigger fade-in on initial load
+        window.addEventListener('load', fadeInCards); 
+
+        function showLoginAlert(event) {
+            event.preventDefault(); 
+            var loginModal = new bootstrap.Modal(document.getElementById('loginAlertModal'), {
+                keyboard: false
+            });
+            loginModal.show(); 
+        }
+
     </script>
 </body>
 </html>

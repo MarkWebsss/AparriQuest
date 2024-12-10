@@ -3,9 +3,15 @@
 namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Owners\OwnerProduct;
+use App\Models\Owners\shopviews;
+use App\Models\Users\shopfeedback;
 
 class businesses extends Model
 {
+    protected $table = 'businesses';
+
     protected $fillable = [
         'firstName',
         'middleName',
@@ -16,9 +22,7 @@ class businesses extends Model
         'ownerCity',
         'ownerEmail',
         'ownerPhone',
-        'dateOfApplication',
         'businessName',
-        'tinNumber',
         'businessNo',
         'BusStreetAddress',
         'businessCity',
@@ -27,28 +31,42 @@ class businesses extends Model
         'status',
         'user_id',
         'latitude',   
-        'longitude', 
+        'longitude',
     ];
 
-    // Automatically set fullName before creating or updating
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     protected static function boot()
     {
         parent::boot();
 
-        // When creating a new record
         static::creating(function ($business) {
             $business->fullName = self::combineFullName($business);
         });
 
-        // When updating an existing record
         static::updating(function ($business) {
             $business->fullName = self::combineFullName($business);
         });
     }
 
-    // Function to combine first, middle, and last names
     private static function combineFullName($business)
     {
         return trim($business->firstName . ' ' . ($business->middleName ?? '') . ' ' . $business->lastName);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(OwnerProduct::class, 'business_id'); // Ensure 'business_id' is the correct foreign key
+    }
+    public function views()
+    {
+        return $this->hasMany(shopviews::class, 'user_id');
+    }
+    public function feedback()
+    {
+        return $this->hasMany(shopfeedback::class, 'business_id');
     }
 }

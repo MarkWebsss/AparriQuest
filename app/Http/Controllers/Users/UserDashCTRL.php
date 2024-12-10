@@ -1,44 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Owners;
+namespace App\Http\Controllers\Users;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Owners\OwnerProduct;
+use Illuminate\Http\Request;
 
-
-class OwnerRequestController extends Controller
+class UserDashCTRL extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        
+        $products = OwnerProduct::whereNull('archived_at')->get();
+        // Return the landing page view with products
+        return view('users.dashboard', compact('products'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
-        //
+        $products = OwnerProduct::whereNull('archived_at')->get();
+        
+        return view('users.products.productview', compact('products'));
     }
 
     /**

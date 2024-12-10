@@ -1,5 +1,6 @@
 @can('admin-access')
     @extends('layouts.Admin.app')
+    @section('page-title', 'Manage Users')
 
         @section('content')
 

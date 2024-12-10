@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\adminLog;
 use App\Models\Admin\businesses;
 use App\Models\User;
+use Carbon\Carbon;
 
 class CTRLbusiness extends Controller
 {
@@ -26,19 +27,16 @@ class CTRLbusiness extends Controller
 
     public function store(Request $request)
     {
-        // Validate the incoming request data
         $validatedData = $request->validate([
             'firstName' => 'required|string|max:255',
-            'middleName' => 'nullable|string|max:255', // Nullable middle name
+            'middleName' => 'nullable|string|max:255', 
             'lastName' => 'required|string|max:255',
             'ownerHouseNo' => 'required|string|max:255',
             'ownerStreetAddress' => 'required|string|max:255',
             'ownerCity' => 'required|string|max:255',
             'ownerEmail' => 'required|email|max:255',
             'ownerPhone' => 'required|string|max:15',
-            'dateOfApplication' => 'required|date',
             'businessName' => 'required|string|max:255',
-            'tinNumber' => 'required|string|max:255',
             'businessNo' => 'required|string|max:255',
             'BusStreetAddress' => 'required|string|max:255',
             'businessCity' => 'required|string|max:255',
@@ -57,8 +55,7 @@ class CTRLbusiness extends Controller
         $business->fullName = $fullName; // Ensure fullName is assigned here
 
         // Combine address fields into fullAddress
-        $fullAddress = trim($validatedData['ownerHouseNo'] . ', ' . $validatedData['ownerStreetAddress'] . ', ' . $validatedData['ownerCity']);
-        
+        $fullAddress = trim($validatedData['businessNo'] . ', ' . $validatedData['BusStreetAddress'] . ', ' . $validatedData['businessCity']);
 
         $business->ownerHouseNo = $validatedData['ownerHouseNo'];
         $business->ownerStreetAddress = $validatedData['ownerStreetAddress'];
@@ -68,9 +65,7 @@ class CTRLbusiness extends Controller
         // Assign other request data to the business model
         $business->ownerEmail = $validatedData['ownerEmail'];
         $business->ownerPhone = $validatedData['ownerPhone'];
-        $business->dateOfApplication = $validatedData['dateOfApplication'];
         $business->businessName = $validatedData['businessName'];
-        $business->tinNumber = $validatedData['tinNumber'];
         $business->businessNo = $validatedData['businessNo'];
         $business->BusStreetAddress = $validatedData['BusStreetAddress'];
         $business->businessCity = $validatedData['businessCity'];
@@ -78,7 +73,11 @@ class CTRLbusiness extends Controller
         $business->businessPhone = $validatedData['businessPhone'];
 
         // Save the business to the database
-        $business->save();
+        try {
+            $business->save();
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
 
         // Redirect or return a response
         return redirect()->route('business.index')->with('success', 'Business registered successfully.');
@@ -87,7 +86,10 @@ class CTRLbusiness extends Controller
 
     public function show(string $id)
     {
-        // Implement your show method logic
+        $business = businesses::findOrFail($id);
+    
+        // Pass the business data to a view called 'admin.users.business.show'
+        return view('admin.users.business.show', compact('business'));
     }
 
     public function edit(string $id)

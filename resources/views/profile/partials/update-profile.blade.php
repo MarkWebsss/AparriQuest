@@ -5,7 +5,7 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's profile information and email address.") }}
+            {{ __("Update your account's profile information, email address, and profile photo.") }}
         </p>
     </header>
 
@@ -13,16 +13,18 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
+        <!-- Name Field -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
+        <!-- Email Field -->
         <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
@@ -47,6 +49,28 @@
             @endif
         </div>
 
+        <!-- Upload Photo Field -->
+        <div>
+            <x-input-label for="photo" :value="__('Profile Photo')" />
+
+            <!-- Display existing profile photo if available -->
+            @if ($user->profile_photo)
+                <div class="mt-2">
+                    <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="Profile Photo" class="rounded-full h-20 w-20 object-cover">
+                </div>
+            @endif
+
+            <!-- File input for photo upload -->
+            <input type="file" name="photo" id="photo" class="mt-2 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none" onchange="previewImage(event)">
+            <x-input-error class="mt-2" :messages="$errors->get('photo')" />
+
+            <!-- Preview the uploaded image -->
+            <div class="mt-4">
+                <x-input-label :value="__('Photo Preview')" />
+                <img id="preview" src="{{ asset('default-image-path') }}" class="rounded-full h-20 w-20 object-cover" alt="Preview Image">
+            </div>
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
@@ -62,3 +86,19 @@
         </div>
     </form>
 </section>
+
+<script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        const imageField = document.getElementById("preview");
+
+        reader.onload = function() {
+            if (reader.readyState === 2) {
+                imageField.src = reader.result;
+            }
+        }
+
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+

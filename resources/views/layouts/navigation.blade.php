@@ -24,11 +24,14 @@
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>
+                        <div>
+                            @if(Auth::check())
                                 <!-- username of the account currently logged in -->
                                 {{ Auth::user()->name }}
-                            
-                            </div>
+                            @else
+                                Guest
+                            @endif
+                        </div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -56,9 +59,12 @@
 
 
                         <x-dropdown-link>
-                            logged in as {{ Auth::user()->roles[0]->name}}
+                            @if(Auth::check() && Auth::user()->roles->isNotEmpty())
+                                logged in as {{ Auth::user()->roles[0]->name }}
+                            @else
+                                Guest
+                            @endif
                         </x-dropdown-link>
-
                     </x-slot>
                 </x-dropdown>
             </div>
@@ -87,8 +93,13 @@
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                @if(Auth::check())
+                    <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                @else
+                    <div class="font-medium text-base text-gray-800">Guest</div>
+                    <div class="font-medium text-sm text-gray-500">No email</div>
+                @endif
             </div>
 
             <div class="mt-3 space-y-1">
