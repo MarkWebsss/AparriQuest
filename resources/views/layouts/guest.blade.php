@@ -13,6 +13,10 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        
+        <link rel="stylesheet" href="{{asset('build/bootstrap/bootstrap.v5.3.2.min.css')}}">
     </head>
     <body class="font-sans antialiased">
     <div class="min-h-screen bg-center flex justify-center items-center" 
@@ -28,7 +32,7 @@
             </div>
             --}}
             <div class="container w-full sm:max-w-md mt-6 px-6 py-4 d-flex justify-content-center align-items-center">
-             <div class="card glass-card p-4">
+             <div class="card glass-card p-5">
                 {{ $slot }}
             </div>
             <style>

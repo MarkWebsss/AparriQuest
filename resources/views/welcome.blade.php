@@ -160,7 +160,7 @@
                         <a href="#products" class="nav-link text-dark fw-bold">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#shops" class="nav-link text-dark fw-bold">Shops</a>
+                        <a href="{{ route('shop') }}" class="nav-link text-dark fw-bold">Shops</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -459,7 +459,7 @@
 <section id="shops">
 <div class="container my-5">
     <h2 class="text-center card bg-success p-4 text-white">Shops You May Like</h2>
-    
+
     <div class="row pt-2">
         @foreach ($businesses as $business)
             <div class="col-md-4 mb-4">
@@ -487,9 +487,8 @@
         @endforeach
     </div>
 
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center mt-4">
-        {{ $businesses->links() }}
+    <div class="pagination">
+        
     </div>
 </div>
 </section>

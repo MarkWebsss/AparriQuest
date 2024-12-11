@@ -26,7 +26,7 @@ use App\Http\Controllers\Users\UserProf;
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page');
 Route::get('/search', [LandingPageController::class, 'search'])->name('search');
 Route::get('/products/{id}', [LandingPageController::class, 'show'])->name('products.productview');
-Route::get('/about', [LandingPageController::class, 'about'])->name('about');
+Route::get('/shop', [LandingPageController::class, 'shop'])->name('shop');
 
 Route::post('/claim-shop', [CTRLOwners::class, 'claimShop'])->name('claim-shop');
 

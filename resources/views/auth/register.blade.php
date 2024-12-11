@@ -1,42 +1,12 @@
 <x-guest-layout>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
     <div class="text-center">
         <img src="{{ asset('logo/logo1.png') }}" alt="Logo" 
         class="logo rounded-circle mx-auto" width="100" height="100">
 </div>
-    <style>
-        .logo {
-                border-radius: 50%;
-                border: 2px solid black;
-            }
-        .input-group {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
 
-        .input-group .input-group-text {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            padding: 0.5rem;
-            pointer-events: none;
-        }
-
-        .input-group .form-control {
-            padding-left: 2.5rem;
-            width: 100%;
-        }
-
-        body, .text-center, .form-control, .input-group-text, label, a, span, h1 {
-            color: black;
-        }
-    </style>
-    <h1 class="text-center mt-2 ">Register to AparriQuest</h1>
+    <h1 class="text-center mt-2 "><b>Register to AparriQuest</b></h1>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -47,7 +17,8 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='user'></box-icon>
                 </div>
-                <x-text-input id="name" class="form-control block mt-1 p-2" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+                <x-text-input id="name" class="form-control block p-2" type="text" name="name" :value="old('name')" required autofocus autocomplete="name"
+                placeholder="Enter your name" />
             </div>
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
@@ -59,7 +30,8 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='envelope'></box-icon>
                 </div>
-                <x-text-input id="email" class="form-control block mt-1 p-2" type="email" name="email" :value="old('email')" required autocomplete="username" />
+                <x-text-input id="email" class="form-control block p-2" type="email" name="email" :value="old('email')" required autocomplete="username"
+                placeholder="Enter your email" />
             </div>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
@@ -71,7 +43,8 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='lock'></box-icon>
                 </div>
-                <x-text-input id="password" class="form-control block mt-1 p-2" type="password" name="password" required autocomplete="new-password" />
+                <x-text-input id="password" class="form-control block p-2" type="password" name="password" required autocomplete="new-password" 
+                placeholder="Enter your password"/>
             </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
@@ -83,7 +56,8 @@
                 <div class="input-group-text">
                     <box-icon type='solid' name='lock-open'></box-icon>
                 </div>
-                <x-text-input id="password_confirmation" class="form-control block mt-1 p-2" type="password" name="password_confirmation" required autocomplete="new-password" />
+                <x-text-input id="password_confirmation" class="form-control block p-2" type="password" name="password_confirmation" required autocomplete="new-password"
+                placeholder="Re-enter your password" />
             </div>
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>

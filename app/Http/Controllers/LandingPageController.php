@@ -39,29 +39,45 @@ class LandingPageController extends Controller
         return view('users.products.productview', compact('products'));
     }
 
-
     public function search(Request $request)
     {
         // Validate the search query
         $request->validate([
             'query' => 'required|string|max:255',
         ]);
-
+    
         // Retrieve the search query
         $query = $request->input('query');
-
-        // Search for products in OwnerProduct model
-        $products = OwnerProduct::where('name', 'LIKE', "%{$query}%")
-            ->orWhere('description', 'LIKE', "%{$query}%")
-            ->get();
-
+    
+        // Search for shops in businesses model
+        $shops = businesses::where('businessName', 'LIKE', "%{$query}%")
+            ->paginate(6); // Paginate the results (6 shops per page)
+    
+        // Retrieve top 3 shops based on view count
         $topShops = businesses::orderBy('view_count', 'desc')->take(3)->get();
-        // Return the search results view with products
-        return view('welcome', compact('products', 'query','topShops'));
+
+        $products = OwnerProduct::whereNull('archived_at')->paginate(10);
+
+        $businesses = businesses::paginate(6);
+
+        foreach ($shops as $shop) {
+            // Check if there are feedbacks and calculate average
+            $shop->averageRating = $shop->feedback->isEmpty() ? 'No ratings yet' : $shop->feedback->avg('rating');
+        }
+        
+        // Return the search results view with shops
+        return view('search', compact('shops', 'query', 'topShops', 'products', 'businesses'));
     }
 
-    public function about()
+    public function shop()
     {
-        return view('about');  // Return the about view
+        $shops = businesses::paginate(6);
+
+        foreach ($shops as $shop) {
+            // Check if there are feedbacks and calculate average
+            $shop->averageRating = $shop->feedback->isEmpty() ? 'No ratings yet' : $shop->feedback->avg('rating');
+        }
+        
+        return view('search', compact('shops'));  
     }
 }
