@@ -14,6 +14,12 @@
 
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+      <!-- Include Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<!-- Include Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     
     <style>
         #welcome {
@@ -126,6 +132,11 @@
                 align-items: center;
                 padding: 0.5rem;
         }
+        .search-container {
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
         .input-group {
             position: relative;
@@ -138,9 +149,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark p-3" id="mainNavbar">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border: none; background: transparent;">
-                <div style="width: 25px; height: 3px; background-color: #fff; border-radius: 5px; margin: 5px auto;"></div>
-                <div style="width: 25px; height: 3px; background-color: #fff; border-radius: 5px; margin: 5px auto;"></div>
-                <div style="width: 25px; height: 3px; background-color: #fff; border-radius: 5px; margin: 5px auto;"></div>
+                <div style="width: 25px; height: 3px; background-color: #000; border-radius: 5px; margin: 5px auto;"></div>
+                <div style="width: 25px; height: 3px; background-color: #000; border-radius: 5px; margin: 5px auto;"></div>
+                <div style="width: 25px; height: 3px; background-color: #000; border-radius: 5px; margin: 5px auto;"></div>
             </button>
                 <div class="logo-container">
                     <a href=""><img src="{{ asset('logo/combinelogo.png') }}" alt="" id="logo1" class=""></a>
@@ -183,9 +194,9 @@
             <!-- First Slide: Logo and Welcome Text -->
             <div class="carousel-item active h-100">
                 <div class="d-flex flex-column justify-content-center align-items-center vh-100 text-center">
-                    <form action="{{ route('search') }}" method="get" class="w-100 mb-4">
-                        <div class="input-group">
-                            <input type="search" name="query" class="form-control" placeholder="Search Shop" aria-label="Search Products">
+                    <form action="{{ route('search') }}" method="get" class="w-75 mb-4">
+                        <div class="input-group search-container">
+                            <input type="search" name="query" class="form-control p-2" placeholder="Search Shop" aria-label="Search Products">
                             <button type="submit" class="btn btn-primary">Search</button>
                         </div>
                     </form>
@@ -277,78 +288,105 @@
     });
 </script>
 
-    <section id="about"  class="bg-success">
-        <div class="container">
-            <h2 class="text-center mb-4 text-white">About AparriQuest</h2>
-            <p class="text-center mb-5 text-white">AparriQuest helps you locate various shops and products in Aparri, making your shopping experience seamless and efficient.</p>
+<section id="about"  class="bg-success">
+
+<div id="map" style="width: 100%; height: 600px;"></div>
             
-            <div class="row justify-content-center">
-                <!-- Card 1 -->
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title bg-primary border rounded-top p-2">Feature 1</h5>
-                            <p class="card-text">Description of Feature 1. This feature helps users find the best shops in their vicinity.</p>
-                        </div>
-                    </div>
-                </div>
+<script>
+  var map = L.map('map').setView([18.35, 121.64], 14);
 
-                <!-- Card 2 -->
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title bg-primary border rounded-top p-2">Feature 2</h5>
-                            <p class="card-text">Description of Feature 2. This feature offers user reviews and ratings of various shops.</p>
-                        </div>
-                    </div>
-                </div>
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
 
-                <!-- Card 3 -->
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title bg-primary border rounded-top p-2">Feature 3</h5>
-                            <p class="card-text">Description of Feature 3. Users can search for specific products and see which shops carry them.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+  // Create a custom market icon
+  var marketIcon = L.icon({
+    iconUrl: '/logo/marketlogo.png', 
+    iconSize: [60, 50], 
+    iconAnchor: [20, 40],  
+    popupAnchor: [0, -40] 
+  });
+
+  fetch('/api/businesses')
+    .then(response => response.json())
+    .then(data => {
+      data.forEach(function(business) {
+        if (business.latitude && business.longitude) {
+          var marker = L.marker([business.latitude, business.longitude], { icon: marketIcon }).addTo(map);
+
+          var businessDetailsUrl = `/business/${business.id}`;
+
+          marker.bindTooltip(`
+            <b>${business.businessName}</b><br>
+            ${business.fullAddress}<br>
+            ${business.businessEmail}<br>
+            ${business.businessPhone}<br>
+            <a href="${businessDetailsUrl}" style="color: blue;">View Details</a>
+          `, {
+            permanent: false, 
+            direction: 'top',  
+            className: 'custom-tooltip'
+          });
+
+          marker.bindPopup(`
+            <b>${business.businessName}</b><br>
+            ${business.fullAddress}<br>
+            ${business.businessEmail}<br>
+            ${business.businessPhone}<br>
+            <a href="${businessDetailsUrl}">View Details</a>
+          `);
+        }
+      });
+    })
+    .catch(error => console.error('Error fetching business data:', error));
+</script>
+
+
+<style>
+    .leaflet-tooltip.custom-tooltip {
+  background-color: #333;
+  color: #fff;
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #fff;
+}
+</style>
+
     </section>
     <style>
-    /* Flexbox for Responsive Layout */
     .product-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center; /* Ensures products are centered */
+        border-radius: 15px;
+        justify-content: center;
     }
 
     .product-column {
-        flex: 0 0 calc(100% / 5 - 10px); /* 5 products per row */
+        flex: 0 0 calc(100% / 5 - 10px);
         max-width: calc(100% / 5 - 10px);
         padding: 10px;
         box-sizing: border-box;
     }
 
-    /* Adjust product image size */
     .product-column img {
         height: 150px;
         width: 100%;
         object-fit: cover;
     }
 
-    /* Responsive Breakpoints */
     @media (max-width: 1200px) {
         .product-column {
-            flex: 0 0 calc(100% / 4 - 10px); /* 4 products per row */
+            flex: 0 0 calc(100% / 4 - 10px); 
             max-width: calc(100% / 4 - 10px);
         }
     }
 
     @media (max-width: 992px) {
         .product-column {
-            flex: 0 0 calc(100% / 3 - 10px); /* 3 products per row */
+            flex: 0 0 calc(100% / 3 - 10px); 
             max-width: calc(100% / 3 - 10px);
         }
     }
@@ -374,7 +412,7 @@
 <section id="products">
     <div class="container">
         <div class="row">
-            <h3 class="text-center card bg-success p-4 text-white" id="banner">Available Products</h3>
+            <h3 class="text-center" id="banner">Available Products</h3>
             <div class="product-container">
                 @if($products->isEmpty())
                     <div class="col-12 text-center">
@@ -387,20 +425,10 @@
                                 <img src="{{ $product->image && file_exists(public_path('storage/' . $product->image)) ? asset('storage/' . $product->image) : asset('logo/NOIMAGE.png') }}" 
                                      class="card-img-top" 
                                      alt="{{ $product->name }}">
-                                <div class="card-body">
+                                <div class="card-body bg-light">
                                     <h5 class="card-title">{{ $product->name }}</h5>
                                     <p class="card-text">Price: ₱{{ $product->price }}</p>
-                                    @if ($product->status === 'Available')
-                                        <p class="card-text" style="color: green;">Status: {{ ucfirst($product->status) }}</p>
-                                    @else
-                                        <p class="card-text" style="color: red;">Status: {{ ucfirst($product->status) }}</p>
-                                    @endif
-
-                                    @if(auth()->check())
-                                        <a href="{{ route('products.productview', $product->id) }}" class="btn btn-primary">View Details</a>
-                                    @else
-                                        <a href="javascript:void(0);" class="btn btn-primary" onclick="showLoginAlert(event)">View Details</a>
-                                    @endif
+                                    <a href="{{ route('products.productview', $product->id) }}" class="btn btn-primary">View Details</a>
                                 </div>
                             </div>
                         </div>
@@ -458,7 +486,7 @@
 </style>
 <section id="shops">
 <div class="container my-5">
-    <h2 class="text-center card bg-success p-4 text-white">Shops You May Like</h2>
+    <h2 class="text-center">Shops You May Like</h2>
 
     <div class="row pt-2">
         @foreach ($businesses as $business)
@@ -480,7 +508,7 @@
                                 No ratings yet
                             @endif
                         </p> <!-- Display average rating -->
-                        <a href="{{ route('business.index', $business->id) }}" onclick="showLoginAlert(event)" class="btn btn-primary">View Details</a>
+                        <a href="{{ route('business.index', $business->id) }}" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
             </div>
@@ -493,7 +521,7 @@
 </div>
 </section>
 
-<section id="contact-us" class="bg-light">
+<section id="contact-us" class="">
     <div class="container">
         <!-- Meet the Team -->
         <div class="row text-center">
@@ -728,7 +756,6 @@ footer {
             });
             loginModal.show(); 
         }
-
     </script>
 </body>
 </html>

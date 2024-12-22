@@ -4,8 +4,7 @@
 
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <!-- Add Vite assets -->
-
-
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <div class="text-center">
         <img src="{{ asset('logo/logo1.png') }}" alt="Logo" class="logo mx-auto" width="100" height="100">
     </div>

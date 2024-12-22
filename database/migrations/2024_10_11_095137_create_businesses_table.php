@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('ownerPhone');
             
             // Business details
+            $table->integer('tin_number')->nullable()->unique();
             $table->string('businessName'); 
             $table->integer('view_count')->default(0);
             $table->string('businessNo');

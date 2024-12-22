@@ -106,9 +106,6 @@ class MapController extends Controller
         return null;  
     }
     
-    
-    
-
     /**
      * Show the form for creating a new resource.
      */

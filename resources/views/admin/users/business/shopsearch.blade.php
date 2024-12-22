@@ -22,7 +22,7 @@
                         <tbody>
                             @foreach($results as $result)
                                 <tr>
-                                <td>{{ $result->tinNumber }}</td>  
+                                <td>{{ $result->tin_number }}</td>  
                                 <td>{{ $result->fullName }}</td>  
                                 <td>{{ $result->businessName }}</td>  
                                 <td>{{ $result->fullAddress }}</td>  

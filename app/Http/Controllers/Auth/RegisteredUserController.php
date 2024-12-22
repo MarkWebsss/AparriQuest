@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Admin\businesses;
+use App\Models\Owners\ClaimRequest;
+use App\Models\ShopRegistration;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -69,34 +72,75 @@ class RegisteredUserController extends Controller
     {
         // Validate the incoming request
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:8',
+            'firstName' => 'required|string|max:255',
+            'middleName' => 'nullable|string|max:255', 
+            'lastName' => 'required|string|max:255',
+            'ownerHouseNo' => 'required|string|max:255',
+            'ownerStreetAddress' => 'required|string|max:255',
+            'ownerCity' => 'required|string|max:255',
+            'ownerEmail' => 'required|email|max:255',
+            'ownerPhone' => 'required|string|max:15',
+            'tin_number' => 'required|digits_between:1,20',
+            'businessName' => 'required|string|max:255',
+            'businessNo' => 'required|string|max:255',
+            'BusStreetAddress' => 'required|string|max:255',
+            'businessCity' => 'required|string|max:255',
+            'businessEmail' => 'required|email|max:255',
+            'businessPhone' => 'required|string|max:15',
         ]);
-        
-        // Check if validation passed
-        \Log::info('Validation passed', $request->all());
-    
-        // Create the user
+        $fullName = $request->firstName . ' ' . ($request->middleName ? $request->middleName . ' ' : '') . $request->lastName;
+        // Create the user (owner)
+        $fullAddress = $request->businessNo . ' ' . ($request->BusStreetAddress ? $request->BusStreetAddress . ' ' : '') . $request->businessCity;
         try {
             $user = User::create([
-                'name' => $request->name,
+                'name' => $fullName,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
-            \Log::info('User created', ['user_id' => $user->id]);
+            Log::info('User created', ['user_id' => $user->id]);
         } catch (\Exception $e) {
-            \Log::error('User creation failed', ['error' => $e->getMessage()]);
+            Log::error('User creation failed', ['error' => $e->getMessage()]);
             return back()->withErrors(['registration' => 'Failed to register user.']);
+        }
+    
+        // Create the business record
+        try {
+            $business = businesses::create([
+                'user_id' => $user->id,
+                'firstName' => $request->firstName,
+                'middleName' => $request->middleName,
+                'lastName' => $request->lastName,
+                'ownerHouseNo' =>  $request->ownerHouseNo,
+                'ownerStreetAddress' =>  $request->ownerStreetAddress,
+                'ownerCity' =>  $request->ownerCity,
+                'ownerEmail' => $request->ownerEmail,
+                'ownerPhone' => $request->ownerPhone,
+                'tin_number' => $request->tin_number,
+                'businessName' => $request->businessName,
+                'businessEmail' => $request->businessEmail,
+                'businessPhone' => $request->businessPhone,
+                'businessNo' => $request->businessNo,
+                'BusStreetAddress' => $request->BusStreetAddress,
+                'businessCity' => $request->businessCity,
+                'status' => 'pending', 
+                'fullName' => $fullName,
+                'fullAddress' => $fullAddress,
+            ]);
+            Log::info('Business created', ['business_id' => $business->id]);
+        } catch (\Exception $e) {
+            Log::error('Business creation failed', ['error' => $e->getMessage()]);
+            return back()->withErrors(['registration' => 'Failed to save business details.']);
         }
     
         // Assign the 'owner' role
         $role = Role::where('name', 'owner')->first();
         if ($role) {
             $user->roles()->attach($role);
-            \Log::info('Role assigned', ['role_id' => $role->id]);
+            Log::info('Role assigned', ['role_id' => $role->id]);
         } else {
-            \Log::error('Owner role not found.');
+            Log::error('Owner role not found.');
         }
     
         // Log the user in
@@ -105,22 +149,6 @@ class RegisteredUserController extends Controller
         return redirect()->route('owner.dashboard');
     }
     
-
-    public function searchShop(Request $request)
-    {
-        $request->validate([
-            'permit_number' => 'required|string',
-        ]);
-
-        // Find the shop by permit number
-        $shop = businesses::where('PermitNum', $request->permit_number)->first();
-
-        if ($shop) {
-            return response()->json(['shop' => $shop]);
-        } else {
-            return response()->json(['error' => 'Shop not found'], 404);
-        }
-    }
 
     public function showRegistrationForm()
     {

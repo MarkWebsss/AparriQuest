@@ -141,7 +141,6 @@
             </button>
 
             @include('layouts.Owner.navigation')
-
             <main>
                 @yield('content')
             </main>

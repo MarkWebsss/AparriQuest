@@ -14,7 +14,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-6 sm:ml-10 sm:flex text-black">
                     <ul class="flex space-x-6 navbar">
-                        <li><a href="{{ route('dashboard') }}" class="text-black no-underline px-3 py-2 rounded-md font-medium">
+                        <li><a href="{{ route('users.dashboard') }}" class="text-black no-underline px-3 py-2 rounded-md font-medium">
                         Dashboard
                         </a></li>
                         <li><a href="{{ route('users.feedback.create') }}" class="text-black no-underline px-3 py-2 rounded-md font-medium">
@@ -75,7 +75,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden sticky bg-opacity-50 backdrop-blur-sm">
         <div class="space-y-1 pb-3">
-            <a href="{{ route('dashboard') }}" class="block text-black no-underline px-3 py-2 rounded-md">
+            <a href="{{ route('users.dashboard') }}" class="block text-black no-underline px-3 py-2 rounded-md">
                 Dashboard
             </a>
             <a href="{{ route('users.feedback.create') }}" class="block text-black no-underline px-3 py-2 rounded-md">

@@ -102,13 +102,8 @@
 </style>
 <ul class="list-unstyled m-4">
     <li class="mb-3">
-        <a href="{{ route('dashboard') }}" class="btn btn-primary p-2 nav-link d-flex align-items-center {{ Request::routeIs('dashboard') ? 'active' : '' }}">
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary p-2 nav-link d-flex align-items-center {{ Request::routeIs('dashboard') ? 'active' : '' }}">
             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-        </a>
-    </li>
-    <li class="mb-3">
-        <a href="{{ route('admin.edit') }}" class="btn btn-outline-primary p-2 nav-link d-flex align-items-center {{ Request::routeIs('admin.edit') ? 'active' : '' }}">
-            <i class="fas fa-user me-2"></i> Profile
         </a>
     </li>
     <li class="mb-3">
@@ -117,8 +112,8 @@
         </a>
     </li>
     <li class="mb-3">
-        <a href="{{ route('users.index') }}" class="btn btn-outline-primary p-2 nav-link d-flex align-items-center {{ Request::routeIs('products.index') ? 'active' : '' }}">
-        <i class="fas fa-users me-2"></i> Manage Users
+        <a href="{{ route('admin.claim-requests.index') }}" class="btn btn-outline-primary p-2 nav-link d-flex align-items-center {{ Request::routeIs('products.index') ? 'active' : '' }}">
+        <i class="fas fa-users me-2"></i> Claim Requests
         </a>
     </li>
     <li class="mb-3">
@@ -127,7 +122,12 @@
         </a>
     </li>
     <li class="mb-3">
-        <a href="#" class="btn btn-outline-primary p-2 nav-link d-flex align-items-center {{ Request::routeIs('settings') ? 'active' : '' }}">
+        <a href="{{ route('admin.report') }}" class="btn btn-outline-primary p-2 nav-link d-flex align-items-center {{ Request::routeIs('feedback') ? 'active' : '' }}">
+            <i class="fas fa-comment-dots me-2"></i> Generate Reports
+        </a>
+    </li>
+    <li class="mb-3">
+        <a href="{{ route('admin.edit') }}" class="btn btn-outline-primary p-2 nav-link d-flex align-items-center {{ Request::routeIs('settings') ? 'active' : '' }}">
             <i class="fas fa-cog me-2"></i> Settings
         </a>
     </li>
@@ -151,7 +151,7 @@
                 <i class="fas fa-bars"></i>
             </button>
 
-            @include('layouts.Owner.navigation')
+            @include('layouts.Admin.navigation')
 
             <main>
                 @yield('content')
@@ -182,7 +182,7 @@
                         <a href="{{ route('business.index') }}" class="btn btn-outline-secondary nav-link px-3 py-2 d-block">Manage Business</a>
                     </li>
                     <li class="mb-3">
-                        <a href="{{ route('users.index') }}" class="btn btn-outline-secondary nav-link px-3 py-2 d-block">Manage Users</a>
+                        <a href="{{ route('admin.claim-requests.index') }}" class="btn btn-outline-secondary nav-link px-3 py-2 d-block">Claim Requests</a>
                     </li>
                     <li class="mb-3">
                         <a href="#" class="btn btn-outline-secondary nav-link px-3 py-2 d-block">Feedback</a>

@@ -18,7 +18,12 @@ class ShopFeedbackCTRL extends Controller
     
         return view('users.feedback.shopfeedback', compact('business'));
     }
-    
+
+    public function feedback($id)
+    {
+        $business = businesses::findOrFail($id);
+        return view('users.feedback.shopfeedback', compact('business'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -57,7 +62,7 @@ class ShopFeedbackCTRL extends Controller
     {
         $business = businesses::with('feedback.user')->findOrFail($id);
     
-        return view('shop.feedback', compact('business'));
+        return view('users.feedback.shopfeedback', compact('business'));
     }
     
 

@@ -18,6 +18,7 @@ class OwnerProduct extends Model
         'image',        
         'name',         
         'description',  
+        'category',
         'price',       
         'status',       
         'archived_at',  

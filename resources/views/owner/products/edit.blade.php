@@ -41,6 +41,22 @@
                         </div>
 
                         <div class="form-group">
+                                <label for="category">Select Category:</label>
+                                <select name="category" id="category" class="form-control" required>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Clothing">Clothing</option>
+                                    <option value="Home Appliances">Home Appliances</option>
+                                    <option value="Furniture">Furniture</option>
+                                    <option value="Books">Books</option>
+                                    <option value="Beauty and Personal Care">Beauty and Personal Care</option>
+                                    <option value="Sports and Outdoors">Sports & Outdoors</option>
+                                    <option value="Toys and Games">Toys & Games</option>
+                                    <option value="Food and Beverages">Food & Beverages</option>
+                                    <option value="Automotive">Automotive</option>
+                                </select>
+                        </div>
+
+                        <div class="form-group">
                             <label for="price">Price</label>
                             <input type="number" name="price" class="form-control" value="{{ $product->price }}" step="0.01" required>
                         </div>

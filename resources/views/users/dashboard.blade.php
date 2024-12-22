@@ -38,7 +38,11 @@
         .product-card {
             border: none;
             border-radius: 8px;
-            overflow: hidden;
+            overflow: hidden; /* Hide overflow to prevent large images from spilling out */
+            height: 300px;  /* Fixed height for uniform card size */
+            width: 100%;  /* Full width based on the column size */
+            display: flex;
+            flex-direction: column; /* Ensure content aligns vertically */
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -48,9 +52,13 @@
         }
 
         .product-image {
-            object-fit: cover;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
+            height: 200px; /* Set a fixed height for the image */
+            display: flex;
+            width: 100%;   /* Full width of the card */
+            object-fit: cover; /* Makes sure images fill the area without distortion */
+            background-color: #f0f0f0; /* Light grey background for no image cases */
+            justify-content: center;
+            align-items: center;
         }
 
         .card-body {
@@ -147,7 +155,7 @@ footer .btn {
     <div class="container-fluid">
         <section id="welcome" style="height: 100vh;">
             <div class="container d-flex flex-column justify-content-center align-items-center vh-100 text-center">
-            <form action="{{ route('users.search.shop') }}" method="get" class="w-75">
+            <form action="{{ route('users.search') }}" method="get" class="w-75">
                     <div class="input-group search-container mb-3">
                         <input 
                         type="search" 
@@ -169,35 +177,155 @@ footer .btn {
                 <p class="outlined-text fw-bold">Don’t know the locations of different shops in Aparri? Just search for the product that you need!</p>
             </div>
         </section>
+        <style> 
+            .ft{
+                font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            }
+            .product-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center; /* Ensures products are centered */
+            }
+            /* Flexbox for Responsive Layout */
+            .product-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center; /* Ensures products are centered */
+            }
+
+            .product-column {
+                flex: 0 0 calc(100% / 5 - 10px); /* 5 products per row */
+                max-width: calc(100% / 5 - 10px);
+                padding: 10px;
+                box-sizing: border-box;
+            }
+
+            /* Adjust product image size */
+            .product-column img {
+                height: 150px;
+                width: 100%;
+                object-fit: cover;
+            }
+
+            /* Responsive Breakpoints */
+            @media (max-width: 1200px) {
+                .product-column {
+                    flex: 0 0 calc(100% / 4 - 10px); /* 4 products per row */
+                    max-width: calc(100% / 4 - 10px);
+                }
+            }
+
+            @media (max-width: 992px) {
+                .product-column {
+                    flex: 0 0 calc(100% / 3 - 10px); /* 3 products per row */
+                    max-width: calc(100% / 3 - 10px);
+                }
+            }
+
+            @media (max-width: 768px) {
+                .product-column {
+                    flex: 0 0 calc(50%); /* 2 products per row */
+                    max-width: calc(50%);
+                }
+            }
+
+            @media (max-width: 576px) {
+                .product-column {
+                    flex: 0 0 calc(50% - 5px); /* 2 products per row (smallest screens) */
+                    max-width: calc(50%);
+                }
+            }
+            section{
+                padding: 20px;
+            }
+            .pagination {
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            margin-top: 20px; 
+            list-style: none;
+            padding: 0;
+        }
+        .product-card {
+            border: none;
+            border-radius: 8px;
+            overflow: hidden; /* Hide overflow to prevent large images from spilling out */
+            height: 300px;  /* Fixed height for uniform card size */
+            width: 100%;  /* Full width based on the column size */
+            display: flex;
+            flex-direction: column; /* Ensure content aligns vertically */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);  /* Slightly enlarge the card */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Add a shadow effect on hover */
+        }
+
+        .product-card .card-body {
+            transition: background-color 0.3s ease;
+        }
+
+        .product-card:hover .card-body {
+            background-color: #f7f7f7; /* Light background color change when hovered */
+        }
+
+        .product-card:hover .card-title {
+            color: #0066cc;  /* Change the title color on hover */
+        }
+
+        .product-card:hover .btn {
+            background-color: #1f1e38; /* Darker button color on hover */
+            color: #fff;  /* Change button text color to white */
+        }
+
+        </style>
         
-        <!-- Product Viewing Section -->
-        <section class="product-section">
+        <section id="products">
             <div class="container">
-                <h2 class="prod text-center mb-4 border rounded-top p-3 border-success border-4">Daily Discover</h2>
-                <div class="row g-0">
-                    @forelse($products as $product)
-                        <div class="col-6 col-lg-2 mb-3 px-2 px-lg-1">
-                            <div class="product-card shadow-sm">
-                                <img src="{{ $product->image && file_exists(public_path('storage/' . $product->image)) ? asset('storage/' . $product->image) : asset('logo/NOIMAGE.png') }}" class="product-image img-fluid" alt="{{ $product->name }}">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ $product->name }}</h5>
-                                    <p class="card-text">{{ $product->description }}</p>
-                                    <p class="card-text text-primary"><strong>Price: ₱{{ $product->price }}</p></strong>
-                                    <p class="card-text text-muted">{{ $product->status }}</p>
-                                    <div class="d-flex justify-content-end">
-                                        <a href="{{ route('users.products.productview', $product->id) }}" class="btn btn-secondary">View</a>
+                <div class="row">
+                    <h3 class="text-center" id="banner">Available Products</h3>
+                    <div class="product-container">
+                        @if($products->isEmpty())
+                            <div class="col-12 text-center">
+                                <p>No products added yet.</p>
+                            </div>
+                        @else
+                            @foreach ($products as $product)
+                                <div class="product-column">
+                                    <div class="card rounded">
+                                        <img src="{{ $product->image && file_exists(public_path('storage/' . $product->image)) ? asset('storage/' . $product->image) : asset('logo/NOIMAGE.png') }}" 
+                                            class="card-img-top" 
+                                            alt="{{ $product->name }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ $product->name }}</h5>
+                                            <p class="card-text">Price: ₱{{ $product->price }}</p>
+                                            @if ($product->status === 'Available')
+                                                <p class="card-text" style="color: green;">Status: {{ ucfirst($product->status) }}</p>
+                                            @else
+                                                <p class="card-text" style="color: red;">Status: {{ ucfirst($product->status) }}</p>
+                                            @endif
+
+                                            @if(auth()->check())
+                                                <a href="{{ route('users.products.productview', $product->id) }}" class="btn btn-primary w-100">View Details</a>
+                                            @else
+                                                <a href="javascript:void(0);" class="btn btn-primary" onclick="showLoginAlert(event)">View Details</a>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="col-12">
-                            <p class="text-center">No product available</p>
-                        </div>
-                    @endforelse
+                            @endforeach
+                        @endif
+                    </div>
+                    <div class="pagination-wrapper">
+                        {{ $products->links('pagination::bootstrap-4') }}
+                    </div>
                 </div>
             </div>
         </section>
+
 
         <footer class="bg-dark text-white py-4">
             <div class="container">

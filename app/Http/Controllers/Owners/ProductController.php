@@ -15,7 +15,8 @@ class ProductController extends Controller
         $status = $request->input('status');
         $showArchived = $request->input('show_archived', false);
         
-     
+        $business = auth()->user()->business; // Get the user's business
+    
         $products = OwnerProduct::where('user_id', Auth::id())
             ->when(!$showArchived, function ($query) {
                 return $query->notArchived();  
@@ -31,16 +32,28 @@ class ProductController extends Controller
     
         $productCount = $products->count(); 
         
-        return view('owner.products.index', compact('products', 'productCount'));
+        return view('owner.products.index', compact('products', 'productCount', 'business')); // Pass $business to the view
     }
-
+    
     public function create()
     {
-        return view('owner.products.create'); 
+        $business = auth()->user()->business; // Get the user's business
+        
+        if ($business && $business->status === 'pending') {
+            // Redirect the user to the business claim page or show a warning message
+            return redirect()->route('owner.submit.claim')->with('error', 'Your shop is still pending approval. You cannot add products until it is claimed.');
+        }
+    
+        return view('owner.products.create', compact('business')); // Pass $business to the view
     }
+    
 
     public function store(Request $request)
     {
+        if (Auth::user()->business == null) {
+            return redirect()->route('owner.dashboard')->with('error', 'You must claim a shop before adding products.');
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -60,7 +73,8 @@ class ProductController extends Controller
             'price' => $request->price,
             'user_id' => Auth::id(),
             'image' => $imagePath,
-            'status' => $request->status
+            'status' => $request->status,
+            'category' => $request->category
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product added successfully!');
@@ -77,6 +91,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'category' => 'required|string|max:255',
             'price' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'status' => 'required|string'
@@ -95,6 +110,7 @@ class ProductController extends Controller
         $product->update([
             'name' => $request->name,
             'description' => $request->description,
+            'category' => $request->category,
             'price' => $request->price,
             'status' => $request->status,
         ]);

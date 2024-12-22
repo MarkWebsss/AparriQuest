@@ -47,45 +47,35 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="ownerStreetAddress">Street Address:</label>
-                                            <input type="text" class="form-control" name="ownerStreetAddress" id="ownerStreetAddress" required>
+                                            <select class="form-control" name="ownerStreetAddress" id="ownerStreetAddress" required>
+                                                <option value="" disabled selected>Select Street Address</option>
+                                                <option value="Alvarado Street">Alvarado Street</option>
+                                                <option value="Balisi Street">Balisi Street</option>
+                                                <option value="Ballesteros Street">Ballesteros Street</option>
+                                                <option value="Bonifacio Street">Bonifacio Street</option>
+                                                <option value="De Carreon Street">De Carreon Street</option>
+                                                <option value="De Rivera Street">De Rivera Street</option>
+                                                <option value="Del Pilar Street">Del Pilar Street</option>
+                                                <option value="Diego Silang Street">Diego Silang Street</option>
+                                                <option value="Doneza Street">Doneza Street</option>
+                                                <option value="E. Jacinto Street">E. Jacinto Street</option>
+                                                <option value="Enrile Street">Enrile Street</option>
+                                                <option value="Loriga Gallarza Street">Loriga Gallarza Street</option>
+                                                <option value="Luna Street">Luna Street</option>
+                                                <option value="Mabini Street">Mabini Street</option>
+                                                <option value="Magsaysay Street">Magsaysay Street</option>
+                                                <option value="Quezon Street">Quezon Street</option>
+                                                <option value="Quirino Street">Quirino Street</option>
+                                                <option value="Rizal Street">Rizal Street</option>
+                                                <option value="Roxas Street">Roxas Street</option>
+                                                <option value="Magapit-Aparri Road">Magapit-Aparri Road</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="ownerProvinceCity">Province/City:</label>
-                                            <input type="text" id="autocompleteInput" name="ownerCity" class="form-control" placeholder=""
-                                        oninput="showSuggestions()" list="suggestions">
-                                        <datalist id="suggestions">
-                                            <option value="Abulug">
-                                            <option value="Alcala">
-                                            <option value="Allacapan">
-                                            <option value="Amulung">
-                                            <option value="Aparri">
-                                            <option value="Baggao">
-                                            <option value="Ballesteros">
-                                            <option value="Buguey">
-                                            <option value="Calayan">
-                                            <option value="Camalaniugan	">
-                                            <option value="Claveria">
-                                            <option value="Enrile">
-                                            <option value="Gattaran">
-                                            <option value="Gonzaga">
-                                            <option value="Iguig">
-                                            <option value="Lal-lo">
-                                            <option value="Lasam">
-                                            <option value="Pamplona">
-                                            <option value="Peñablanca">
-                                            <option value="Piat">
-                                            <option value="Rizal">
-                                            <option value="Sanchez-Mira">
-                                            <option value="Santa Ana">
-                                            <option value="Santa Praxedes">
-                                            <option value="Santa Teresita">
-                                            <option value="Santo Niño">
-                                            <option value="Solana">
-                                            <option value="Tuao">
-                                            <option value="Tuguegarao City">
-                                        </datalist>
+                                            <label for="ownerCity">Province/City:</label>
+                                            <input type="text" id="autocompleteInput" name="ownerCity" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -120,6 +110,12 @@
                                             <input type="text" class="form-control" name="businessName" id="businessName" required placeholder="Enter the Business Name">
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="businessName">Tin/Permit Number</label>
+                                            <input type="text" class="form-control" name="tin_number" id="tin_number" required placeholder="Enter the Registered Tin/Permit Number">
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row">
@@ -132,45 +128,35 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="streetAddress">Street Address:</label>
-                                            <input type="text" class="form-control" name="BusStreetAddress" id="BusStreetAddress" required>
+                                            <select class="form-control" name="BusStreetAddress" id="BusStreetAddress" required>
+                                                <option value="" disabled selected>Select Street Address</option>
+                                                <option value="Alvarado Street">Alvarado Street</option>
+                                                <option value="Balisi Street">Balisi Street</option>
+                                                <option value="Ballesteros Street">Ballesteros Street</option>
+                                                <option value="Bonifacio Street">Bonifacio Street</option>
+                                                <option value="De Carreon Street">De Carreon Street</option>
+                                                <option value="De Rivera Street">De Rivera Street</option>
+                                                <option value="Del Pilar Street">Del Pilar Street</option>
+                                                <option value="Diego Silang Street">Diego Silang Street</option>
+                                                <option value="Doneza Street">Doneza Street</option>
+                                                <option value="E. Jacinto Street">E. Jacinto Street</option>
+                                                <option value="Enrile Street">Enrile Street</option>
+                                                <option value="Loriga Gallarza Street">Loriga Gallarza Street</option>
+                                                <option value="Luna Street">Luna Street</option>
+                                                <option value="Mabini Street">Mabini Street</option>
+                                                <option value="Magsaysay Street">Magsaysay Street</option>
+                                                <option value="Quezon Street">Quezon Street</option>
+                                                <option value="Quirino Street">Quirino Street</option>
+                                                <option value="Rizal Street">Rizal Street</option>
+                                                <option value="Roxas Street">Roxas Street</option>
+                                                <option value="Magapit-Aparri Road">Magapit-Aparri Road</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                        <label for="suggestions">Province/City:</label>
-                                        <input type="text" id="autocompleteInput" name="businessCity" class="form-control" placeholder=""
-                                        oninput="showSuggestions()" list="suggestions">
-                                        <datalist id="suggestions">
-                                            <option value="Abulug">
-                                            <option value="Alcala">
-                                            <option value="Allacapan">
-                                            <option value="Amulung">
-                                            <option value="Aparri">
-                                            <option value="Baggao">
-                                            <option value="Ballesteros">
-                                            <option value="Buguey">
-                                            <option value="Calayan">
-                                            <option value="Camalaniugan	">
-                                            <option value="Claveria">
-                                            <option value="Enrile">
-                                            <option value="Gattaran">
-                                            <option value="Gonzaga">
-                                            <option value="Iguig">
-                                            <option value="Lal-lo">
-                                            <option value="Lasam">
-                                            <option value="Pamplona">
-                                            <option value="Peñablanca">
-                                            <option value="Piat">
-                                            <option value="Rizal">
-                                            <option value="Sanchez-Mira">
-                                            <option value="Santa Ana">
-                                            <option value="Santa Praxedes">
-                                            <option value="Santa Teresita">
-                                            <option value="Santo Niño">
-                                            <option value="Solana">
-                                            <option value="Tuao">
-                                            <option value="Tuguegarao City">
-                                        </datalist>
+                                            <label for="suggestions">Barangay</label>
+                                            <input type="text" id="autocompleteInput" name="businessCity" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -201,21 +187,6 @@
             </div>
         </div>
     </div>
-    <script>
-        function showSuggestions() {
-    const input = document.getElementById('autocompleteInput');
-    const datalist = document.getElementById('suggestions');
-
-    // Check if the input is not empty
-    if (input.value.length > 0) {
-        // Show the datalist
-        datalist.size = 5; // Change size to display more options
-    } else {
-        // Hide the datalist
-        datalist.size = 0; // Hide the dropdown
-    }
-}
-    </script>
 </form>
 
 

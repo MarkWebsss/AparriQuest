@@ -21,15 +21,26 @@ use App\Models\Owners\OwnerProduct;
 use App\Models\Admin\businesses;
 use App\Http\Controllers\Users\CTRLproducts;
 use App\Http\Controllers\Users\UserDashCTRL;
+use App\Http\Controllers\Owners\OwnerDashCTRL;
+use App\Http\Controllers\Admin\AdminDashCTRL;
 use App\Http\Controllers\Users\UserProf;
+use App\Http\Controllers\Admin\AdminClaimRequestController;
+use App\Http\Controllers\Users\ShopFeedbackCTRL;
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landing.page');
 Route::get('/search', [LandingPageController::class, 'search'])->name('search');
 Route::get('/products/{id}', [LandingPageController::class, 'show'])->name('products.productview');
 Route::get('/shop', [LandingPageController::class, 'shop'])->name('shop');
 
+Route::post('/notifications/mark-all-read', [CTRLOwners::class, 'markAllAsRead']);
+
 Route::post('/claim-shop', [CTRLOwners::class, 'claimShop'])->name('claim-shop');
 
+Route::get('/business/{id}', [LandingPageController::class, 'business'])->name('business.show');
+
+Route::get('/api/businesses', function () {
+    return businesses::select('id', 'businessName', 'fullAddress', 'businessEmail', 'businessPhone', 'latitude', 'longitude')->get();
+});
 // Authentication routes
 require __DIR__ . '/auth.php';
 
@@ -51,52 +62,18 @@ Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.up
 
 Route::get('/dashboard', function () {
     $user = Auth::user();
-
-    if ($user->roles->isEmpty()) {
-        abort(403, 'Unauthorized');
-    }
-
     foreach ($user->roles as $role) {
         if ($role->name == "admin") {
-            return app(DashCTRL::class)->index(); 
-        } elseif ($role->name == "owner") {
-            $userId = Auth::id();
-            
-            $business = businesses::where('user_id', $userId)
-                ->where('status', 'Claimed') 
-                ->first();
-
-            $availableStockCount = OwnerProduct::where('user_id', $userId)
-                ->where('status', 'Available')
-                ->count();
-            $outOfStockCount = OwnerProduct::where('user_id', $userId)
-                ->where('status', 'Out of Stock')
-                ->count();
-            $productCount = OwnerProduct::where('user_id', $userId)->count();
-
-            // Add a null check for $business
-            if ($business) {
-                $feedbacks = $business->feedback; // Fetch feedback if business exists
-                $averageRating = $feedbacks->isNotEmpty() ? $feedbacks->avg('rating') : null;
-                $viewCount = $business->view_count ?? 0;
-            } else {
-                $feedbacks = collect(); // Default to an empty collection if no business
-                $averageRating = null;
-                $viewCount = 0;
-            }
-
-            return view('owner.dashboard')->with(compact(
-                'business', 'productCount', 'availableStockCount', 
-                'outOfStockCount', 'viewCount', 'feedbacks', 'averageRating'
-            ));
+            return redirect()->route('admin.dashboard'); 
+        }
+        if ($role->name == "owner") {
+            return redirect()->route('owner.dashboard'); 
         }
     }
-
-    $products = OwnerProduct::whereNull('archived_at')->get();
-    $business = businesses::all();
-    return view('users.dashboard')->with(compact('products', 'business'));
+    return redirect()->route('users.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/admin/dashboard', [DashCTRL::class, 'index'])->name('admin.dashboard');
 
 // Profile routes
 Route::middleware('auth')->group(function () {
@@ -123,50 +100,65 @@ Route::prefix('admin')->middleware(['auth', 'can:admin-access'])->group(function
         Route::get('/userCount', 'CTRLbusiness@usercount')->name('userscount');
         Route::post('/import-data', [CTRLimport::class, 'import'])->name('data.import');
         Route::get('/dashboard', [DashCTRL::class, 'index'])->name('admin.dashboard');    
+
+        Route::get('/claim-requests', [AdminClaimRequestController::class, 'index'])->name('admin.claim-requests.index');
+        Route::get('/claim-request/{claimRequest}', [AdminClaimRequestController::class, 'show'])->name('admin.claim-requests.show');
+        Route::put('/claim-request/{claimRequest}/approve', [AdminClaimRequestController::class, 'approve'])->name('admin.claim-requests.approve');
+        Route::put('/claim-request/{claimRequest}/reject', [AdminClaimRequestController::class, 'reject'])->name('admin.claim-requests.reject');
+
+        Route::get('/report', 'ReportController@generateReport')->name('admin.report');
+        Route::get('/admin/report/export', 'ReportController@export')->name('admin.report.export');
     });
 });
 
-// Owner routes
 Route::prefix('owner')->middleware(['auth', 'can:owner-access'])->group(function () {
+    // Dashboard route (no need for extra middleware)
+    Route::get('/dashboard', [OwnerDashCTRL::class, 'index'])->name('owner.dashboard');
 
+    // Claim shop related routes
+    Route::get('/claim-shop', [CTRLOwners::class, 'showClaimForm'])->name('owner.claim-form');
+    Route::post('/claim-shop', [CTRLOwners::class, 'submitClaimRequest'])->name('owner.submit.claim');
+    Route::post('/owner/claim-shop', [CTRLOwners::class, 'claimShop'])->name('owner.claim-shop');
+
+    // Business registration
     Route::get('/register', [RegisteredUserController::class, 'createBusiness'])->name('owner.register');
-    Route::post('/register', [RegisteredUserController::class, 'storeBusiness'])->name('register.business.submit'); 
+    Route::post('/register', [RegisteredUserController::class, 'storeBusiness'])->name('register.business.submit');
 
-    Route::get('/dashboard', [CTRLOwners::class, 'index'])->name('owner.dashboard');
-    Route::post('/claim-shop', [CTRLOwners::class, 'claimShop'])->name('owner.claim-shop');
+    // Shop views graph
     Route::get('/owner/shop-views-graph', [CTRLOwners::class, 'getShopViewsGraphData'])->name('owner.shop.views.graph');
 
+    // Product routes
     Route::resource('owner/products', ProductController::class);
-
-    Route::get('/owner/business-profile', [OwnerProf::class, 'index'])->name('owner.business.profile');
-    Route::put('/owner/business-profile/update-logo/{id}', [OwnerProf::class, 'updateLogo'])->name('owner.business.update-logo');
-
-    Route::get('owner/feedback', [OwnerProf::class, 'feedback'])->name('owner.feedback');
-    Route::get('owner/shop-feedback/{businessId}', [OwnerProf::class, 'shopfeedback'])->name('owner.shopfeedback');   
-
-    Route::get('/owner/business-profile/{id}/edit/', [OwnerProf::class, 'shopedit'])->name('owner.business.edit');
-    Route::put('/owner/business-profile/update/{id}', [OwnerProf::class, 'shopupdate'])->name('owner.business.update');
-
-    // Routes to archive or unarchive a product
     Route::patch('products/{product}/archive', [ProductController::class, 'archive'])->name('products.archive');
     Route::patch('products/{product}/unarchive', [ProductController::class, 'unarchive'])->name('products.unarchive');
 
-});
+    // Business Profile Routes
+    Route::get('/owner/business-profile', [OwnerProf::class, 'index'])->name('owner.business.profile');
+    Route::put('/owner/business-profile/update-logo/{id}', [OwnerProf::class, 'updateLogo'])->name('owner.business.update-logo');
+    Route::get('/owner/business-profile/{id}/edit/', [OwnerProf::class, 'shopedit'])->name('owner.business.edit');
+    Route::put('/owner/business-profile/update/{id}', [OwnerProf::class, 'shopupdate'])->name('owner.business.update');
+
+    // Feedback Routes
+    Route::get('owner/feedback', [OwnerProf::class, 'feedback'])->name('owner.feedback');
+    Route::get('owner/shop-feedback/{businessId}', [OwnerProf::class, 'shopfeedback'])->name('owner.shopfeedback');
+}); 
 
 // User routes
 Route::namespace('App\Http\Controllers\Users')->prefix('users')->name('users.')->middleware('can:user-access')->group(function () {
+    Route::get('/dashboard', [UserDashCTRL::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+    
     Route::resource('/feedback', 'CTRLFeedbacks')->except(['update', 'edit', 'destroy']);
     Route::get('/myfeedbacks', 'CTRLFeedbacks@myfeedback')->name('myfeedback');
     Route::resource('/products', 'CTRLproducts');
-
-    Route::get('/dashboard',  [UserDashCTRL::class, 'index'])->name('users.dashboard');
 
     Route::get('/view-shop/{id}', [ShopController::class, 'show'])->name('view.shop');
 
     Route::get('/products/{id}', 'CTRLproducts@show')->name('products.productview');
     Route::get('/search/product', 'CTRLproducts@searchproducts')->name('search.product');
-
     Route::get('/search/shop', 'CTRLproducts@search')->name('search.shop');
+    Route::get('/search/all', 'CTRLproducts@allsearch')->name('search');
 
     Route::resource('/shop', 'ShopController');
     Route::get('/shop/{businessId}', [ShopController::class, 'shop'])->name('check.shop');
@@ -175,4 +167,5 @@ Route::namespace('App\Http\Controllers\Users')->prefix('users')->name('users.')-
     Route::get('/map/track/{id}', [MapController::class, 'trackProduct'])->name('map.track');
 
     Route::resource('/shop-feedback', 'ShopFeedbackCTRL');
+    Route::get('/shop-feedback/{id}', [ShopFeedbackCTRL::class, 'feedback'])->name('shopfeedback');
 });

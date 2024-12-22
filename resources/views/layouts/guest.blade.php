@@ -23,7 +23,8 @@
             style="
             background-image: url('{{ asset('aparriquest/aparri.jpg') }}');
             background-repeat: no-repeat;
-            background-size: cover;">
+            background-size: cover;
+            ">
             {{--
             <div>
                 <a href="/">
@@ -32,7 +33,7 @@
             </div>
             --}}
             <div class="container w-full sm:max-w-md mt-6 px-6 py-4 d-flex justify-content-center align-items-center">
-             <div class="card glass-card p-5">
+             <div class="card p-5">
                 {{ $slot }}
             </div>
             <style>

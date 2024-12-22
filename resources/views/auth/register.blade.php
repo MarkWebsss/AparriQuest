@@ -1,10 +1,11 @@
 <x-guest-layout>
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <div class="text-center">
         <img src="{{ asset('logo/logo1.png') }}" alt="Logo" 
         class="logo rounded-circle mx-auto" width="100" height="100">
-</div>
+    </div>
 
     <h1 class="text-center mt-2 "><b>Register to AparriQuest</b></h1>
     <form method="POST" action="{{ route('register') }}">

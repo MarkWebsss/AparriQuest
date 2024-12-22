@@ -92,6 +92,13 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
+                                <label for="businessNo" class="block text-sm font-medium text-gray-700">Business Number</label>
+                                <input type="text" id="businessNo" name="businessNo" value="{{ old('businessNo', $business->businessNo) }}" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm" required>
+                                @error('businessNo')
+                                    <div class="text-red-500 text-xs mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
                                 <label for="BusStreetAddress" class="block text-sm font-medium text-gray-700">Street Address</label>
                                 <input type="text" id="BusStreetAddress" name="BusStreetAddress" value="{{ old('BusStreetAddress', $business->BusStreetAddress) }}" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm" required>
                                 @error('BusStreetAddress')

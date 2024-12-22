@@ -27,7 +27,7 @@
     @endif
 </div>
 
-@if (!Auth::user()->business)
+@if ($business && $business->status === 'pending')
     <div class="alert alert-warning alert-dismissible fade show m-5" role="alert" style="border-radius: 8px; position: relative; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
         <strong>Warning!</strong> You must claim a shop before adding products.
         <a href="{{ route('owner.dashboard') }}" class="btn btn-link font-weight-bold" style="text-decoration: underline; padding-left: 0;">Go Claim Shop</a>
@@ -86,6 +86,7 @@
                                 <div class="ml-3">
                                     <h5 class="card-title">{{ $product->name }}</h5>
                                     <p class="card-text">{{ $product->description }}</p>
+                                    <p class="card-text">{{ $product->category }}</p>
                                     <p class="card-text text-primary"><strong>Price: ₱</strong>{{ $product->price }}</p>
                                     <p class="card-text text-muted">{{ $product->status }}</p>
                                     @if($product->archived_at)
@@ -167,6 +168,15 @@
     }
 
     document.addEventListener('DOMContentLoaded', fadeOutAlerts);
+
+    $('#ModalCreate').on('show.bs.modal', function () {
+    $(this).attr('aria-hidden', 'false');
+});
+
+$('#ModalCreate').on('hide.bs.modal', function () {
+    $(this).attr('aria-hidden', 'true');
+});
+
 </script>
 @endsection
 

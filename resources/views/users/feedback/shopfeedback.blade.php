@@ -109,6 +109,8 @@
                     {{ session('success') }}
                 </div>
             @endif
+
+            <a href="{{ route('users.shop.index') }}" class="btn btn-danger my-3">Back to Shop</a>
     <div class="feedback-form mt-4">
         <!-- Display the Shop Name -->
         <div class="shop-name">

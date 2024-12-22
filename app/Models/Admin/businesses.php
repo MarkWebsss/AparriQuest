@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Owners\OwnerProduct;
 use App\Models\Owners\shopviews;
 use App\Models\Users\shopfeedback;
+use App\Models\Owners\ClaimRequest;
 
 class businesses extends Model
 {
@@ -22,6 +23,7 @@ class businesses extends Model
         'ownerCity',
         'ownerEmail',
         'ownerPhone',
+        'tin_number',
         'businessName',
         'businessNo',
         'BusStreetAddress',
@@ -68,5 +70,9 @@ class businesses extends Model
     public function feedback()
     {
         return $this->hasMany(shopfeedback::class, 'business_id');
+    }
+    public function claimRequests()
+    {
+        return $this->hasMany(ClaimRequest::class, 'business_id'); // Make sure to use the correct foreign key
     }
 }

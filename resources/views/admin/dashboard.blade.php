@@ -3,7 +3,7 @@
 @section('content')
     <!-- Main Content Area -->
     <div class="flex-grow-1" style="background-color: #f8f9fa;">
-
+    @include('partials.notification')
         <!-- Welcome Card -->
         <div class="card mb-4 bg-success m-3 shadow-sm">
             <div class="card-body text-white text-center">

@@ -11,6 +11,10 @@
                 <table class="table table-bordered table-hover">
                     <tbody>
                         <tr>
+                            <th class="bg-light">Tin Number:</th>
+                            <td>{{ $business->tin_number }}</td>
+                        </tr>
+                        <tr>
                             <th class="bg-light">Business Name:</th>
                             <td>{{ $business->businessName }}</td>
                         </tr>

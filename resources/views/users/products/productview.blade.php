@@ -14,11 +14,8 @@
                 <div class="row">
                     {{-- Left Column: Product Image --}}
                     <div class="col-lg-6 d-flex justify-content-center align-items-center mb-4 mb-lg-0">
-                        @if($product->image)
-                            <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid rounded m-2" alt="{{ $product->name }}" style="max-width: 100%; height: auto;">
-                        @else
-                            <img src="{{ asset('public/logo/NOIMAGE.png') }}" class="img-fluid rounded" alt="No Image Available" style="max-width: 100%; height: auto;">
-                        @endif
+                            <img src="{{ $product->image && file_exists(public_path('storage/' . $product->image)) ? asset('storage/' . $product->image) : asset('logo/NOIMAGE.png') }}" class="img-fluid rounded m-2" alt="{{ $product->name }}" style="max-width: 100%; height: auto;">
+                        
                     </div>
 
                     {{-- Right Column: Product Details --}}

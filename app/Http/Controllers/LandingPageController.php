@@ -39,6 +39,16 @@ class LandingPageController extends Controller
         return view('users.products.productview', compact('products'));
     }
 
+    public function business(string $id)
+    {
+        // Fetch the specific business by its id
+        $business = businesses::findOrFail($id);
+    
+        // Pass the data to the view
+        return view('index', compact('business'));
+    }
+    
+
     public function search(Request $request)
     {
         // Validate the search query

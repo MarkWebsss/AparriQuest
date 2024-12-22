@@ -19,12 +19,14 @@ class CTRLproducts extends Controller
     {
         $business = businesses::first();
         
-        $products = OwnerProduct::whereNull('archived_at')->get();
+        $products = OwnerProduct::whereNull('archived_at')->paginate(8);
 
         $feedbacks = shopfeedback::where('business_id', $business->id)->get();
         $averageRating = $feedbacks->avg('rating');
 
-        return view('users.products.index', compact('products', 'business','averageRating'));
+        $categories = OwnerProduct::pluck('category')->unique();
+
+        return view('users.products.index', compact('products', 'business','averageRating','categories'));
     }
     
 
@@ -152,26 +154,80 @@ public function search(Request $request)
 }
 
     
-    public function searchproducts(Request $request)
-    {
-        // Get the search query input from the user
-    $query = $request->input('query'); 
+public function searchproducts(Request $request)
+{
+    $query = $request->input('query');
+    $category = $request->input('category');
+    $sort = $request->input('sort');
+    $minPrice = $request->input('min_price');
+    $maxPrice = $request->input('max_price');
 
-    // Initialize the query to fetch products
+    // Initialize the query for products (from the 'owner_products' table)
     $products = OwnerProduct::query();
 
-    // Check if a query was entered
     if (!empty($query)) {
-        // Search in the 'name' and 'description' columns using 'like' to allow for partial matching
-        $products = $products->where(function($queryBuilder) use ($query) {
-            $queryBuilder->where('name', 'like', '%' . $query . '%')
-                         ->orWhere('description', 'like', '%' . $query . '%');
-        });
+        $products = $products->where('name', 'like', '%' . $query . '%')
+                             ->orWhere('description', 'like', '%' . $query . '%');
     }
 
-    // Fetch the products from the database
-    $products = $products->get();
-        // Return the search results view with products
-        return view('users.products.index', compact('products', 'query'));
+    if (!empty($category)) {
+        $products = $products->where('category', $category); // Assuming 'category' is the column in owner_products table
     }
+
+    // Apply price filtering if min and/or max prices are set
+    if (!empty($minPrice)) {
+        $products = $products->where('price', '>=', $minPrice);
+    }
+
+    if (!empty($maxPrice)) {
+        $products = $products->where('price', '<=', $maxPrice);
+    }
+
+    // Sorting
+    switch ($sort) {
+        case 'newest':
+            $products->orderBy('created_at', 'desc');
+            break;
+        case 'oldest':
+            $products->orderBy('created_at', 'asc');
+            break;
+        case 'price_asc':
+            $products->orderBy('price', 'asc');
+            break;
+        case 'price_desc':
+            $products->orderBy('price', 'desc');
+            break;
+        default:
+            $products->orderBy('id', 'asc');
+            break;
+    }
+
+    // Get all products
+    $products = $products->paginate(8);
+
+    // Get categories
+    $categories = OwnerProduct::pluck('category')->unique();
+
+    return view('users.products.productresult', compact('products', 'query', 'categories', 'minPrice', 'maxPrice'));
+}
+
+
+public function allsearch(Request $request)
+{
+    $query = $request->input('query');
+
+    // Search in businesses table
+    $shops = businesses::where('businessName', 'LIKE', "%$query%")
+        ->orWhere('fullAddress', 'LIKE', "%$query%")
+        ->orWhere('businessEmail', 'LIKE', "%$query%")
+        ->get();
+
+    // Search in products table
+    $products = OwnerProduct::where('name', 'LIKE', "%$query%")
+        ->orWhere('description', 'LIKE', "%$query%")
+        ->orWhere('category', 'LIKE', "%$query%")
+        ->get();
+
+    return view('users.results', compact('shops', 'products', 'query'));
+}
 }

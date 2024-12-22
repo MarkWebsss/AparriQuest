@@ -3,49 +3,19 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Owners\OwnerProduct;
-use Illuminate\Http\Request;
+use App\Models\Admin\businesses;
 
 class UserDashCTRL extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $products = OwnerProduct::whereNull('archived_at')->get();
-        // Return the landing page view with products
-        return view('users.dashboard', compact('products'));
-    }
-    
-    public function show(string $id)
-    {
-        $products = OwnerProduct::whereNull('archived_at')->get();
+
+        // Default user dashboard (for normal users)
+        $products = OwnerProduct::whereNull('archived_at')->paginate(10);
+        $business = businesses::all();
         
-        return view('users.products.productview', compact('products'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return view('users.dashboard')->with(compact('products', 'business'));
     }
 }

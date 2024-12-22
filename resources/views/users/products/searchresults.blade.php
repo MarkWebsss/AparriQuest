@@ -191,7 +191,8 @@ ul li span {
                     </div>
                 @else
                     @foreach ($shops as $shop)
-                        <div class="shop-column">
+                    @if($shop->user && $shop->user->business)  
+                    <div class="shop-column">
                             <div class="custom-card">
                                 <div class="custom-card-body">
                                 <h2 class="card-title d-flex justify-content-between align-items-center">
@@ -239,6 +240,7 @@ ul li span {
                                 </div>
                             </div>
                         </div>
+                        @endif
                     @endforeach
                 @endif
             </div>

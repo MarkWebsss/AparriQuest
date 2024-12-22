@@ -6,18 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\Log;
 use App\Models\Admin\adminLog;
 use App\Models\Admin\businesses;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Models\ShopRegistration;
 
 class CTRLbusiness extends Controller
 {
     public function index()
     {
         $businesses = businesses::paginate(5);
-        return view('admin.users.business.index', compact('businesses'));
+        $shops = ShopRegistration::paginate(5);
+        return view('admin.users.business.index', compact('businesses', 'shops'));
     }
 
     public function create()
@@ -36,6 +38,7 @@ class CTRLbusiness extends Controller
             'ownerCity' => 'required|string|max:255',
             'ownerEmail' => 'required|email|max:255',
             'ownerPhone' => 'required|string|max:15',
+            'tin_number' => 'required|string|max:265',
             'businessName' => 'required|string|max:255',
             'businessNo' => 'required|string|max:255',
             'BusStreetAddress' => 'required|string|max:255',
@@ -65,6 +68,7 @@ class CTRLbusiness extends Controller
         // Assign other request data to the business model
         $business->ownerEmail = $validatedData['ownerEmail'];
         $business->ownerPhone = $validatedData['ownerPhone'];
+        $business->tin_number = $validatedData['tin_number'];
         $business->businessName = $validatedData['businessName'];
         $business->businessNo = $validatedData['businessNo'];
         $business->BusStreetAddress = $validatedData['BusStreetAddress'];
@@ -76,6 +80,7 @@ class CTRLbusiness extends Controller
         try {
             $business->save();
         } catch (\Exception $e) {
+            Log::error('Business creation failed', ['error' => $e->getMessage()]);
             return redirect()->back()->with('error', $e->getMessage());
         }
 
@@ -119,7 +124,7 @@ class CTRLbusiness extends Controller
         $query = $request->input('query');
 
         
-        $results = businesses::where('tinNumber',  $query)->get();
+        $results = businesses::where('tin_number',  $query)->get();
     
         
         if ($results->isNotEmpty()) {

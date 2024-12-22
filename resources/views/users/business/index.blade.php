@@ -41,12 +41,15 @@
                         <p class="mt-2 text-sm text-gray-500">No feedback yet for this shop.</p>
                     @endif
 
-                    <a href="{{ route('users.shop-feedback.index') }}" 
-                       class="btn btn-primary mt-4 text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">
-                       Feedback
-                    </a>
-                    <a href="{{ route('users.map.track', $business->id) }}" 
-                    class="btn btn-primary mt-4 text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Track</a>
+                    <a href="{{ route('users.shopfeedback', ['id' => $business->id]) }}" 
+                        class="btn btn-primary mt-4 text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">
+                        Feedback
+                        </a>
+                    @if ($products->isNotEmpty())
+                        <a href="{{ route('users.map.track', $products->first()->id) }}" 
+                        class="btn btn-primary mt-4 text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Track</a>
+                    @endif
+
                 </div>
             </div>
 

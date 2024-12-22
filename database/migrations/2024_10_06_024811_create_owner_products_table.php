@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
+            $table->string('category');
             $table->decimal('price', 10, 2);
             $table->string('status')->default('available');
         

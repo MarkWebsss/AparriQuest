@@ -11,11 +11,15 @@
                 </div>
             @endif
 
-            @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
-            @endif
+            @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
             <div class="p-6 text-gray-900">
                         <div class="container">
@@ -47,6 +51,7 @@
                         <table class="table table-condensed table-hover">
                             <thead>
                                 <tr>
+                                    <th>TIN Number</th>
                                     <th>Proprietor</th>
                                     <th>Business Name</th>
                                     <th>Full Address</th>
@@ -57,6 +62,7 @@
                             <tbody>
                                 @foreach($businesses as $business)
                                     <tr>
+                                        <td>{{ $business->tin_number }}</td>  
                                         <td>{{ $business->fullName }}</td>  
                                         <td>{{ $business->businessName }}</td>  
                                         <td>{{ $business->fullAddress }}</td>
